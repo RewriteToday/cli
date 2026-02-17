@@ -16,7 +16,7 @@ var switchCmd = &cobra.Command{
 
 		name = args[0]
 		if len(args) > 0 {
-			return fmt.Errorf("profile name required (or use -i for interactive mode)")
+			return fmt.Errorf("profile name required")
 		}
 
 		if err := profile.SetActive(name); err != nil {

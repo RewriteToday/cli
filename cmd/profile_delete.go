@@ -10,7 +10,7 @@ import (
 
 var profileDelCmd = &cobra.Command{
 	Use:     "del <name>",
-	Aliases: []string{"delete"},
+	Aliases: []string{"del"},
 	Short:   "Delete a profile",
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
