@@ -19,13 +19,17 @@ var triggerCmd = &cobra.Command{
 
 		if len(args) > 0 {
 			eventTypeStr = args[0]
-		} else if interactive {
+		}
+
+		if eventTypeStr == "" && interactive {
 			var err error
 			eventTypeStr, err = prompt.SelectString("Select an event type", api.SupportedEventStrings())
 			if err != nil {
 				return err
 			}
-		} else {
+		}
+
+		if eventTypeStr == "" {
 			return fmt.Errorf("event type required (or use -i for interactive mode)")
 		}
 
