@@ -13,8 +13,12 @@ var rootCmd = &cobra.Command{
 	Short:         "A developer-first CLI to integrate Rewrite in your workflow",
 }
 
-func Execute() error {
+func init() {
 	rootCmd.PersistentFlags().Bool("no-color", false, "Remove color from the output")
+	rootCmd.PersistentFlags().BoolP("interactive", "i", false, "Run in interactive mode")
+	rootCmd.PersistentFlags().StringP("output", "o", "text", "Output format (text or json)")
+}
 
+func Execute() error {
 	return rootCmd.Execute()
 }

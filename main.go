@@ -1,9 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/rewritestudios/cli/cmd"
 )
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
