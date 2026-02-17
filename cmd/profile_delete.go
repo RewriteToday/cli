@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
-	"github.com/rewritestudios/cli/internal/prompt"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,8 @@ var profileDelCmd = &cobra.Command{
 
 func runProfileDeleteCommand(cmd *cobra.Command, args []string) error {
 	interactive, _ := cmd.Flags().GetBool("interactive")
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
 
 	name, err := resolveProfileNameToDelete(args, interactive)
 	if err != nil {
@@ -25,7 +28,7 @@ func runProfileDeleteCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	if interactive {
-		cancelled, err := confirmDeleteProfile(name)
+		cancelled, err := confirmDeleteProfile(name, format, noColor)
 		if err != nil {
 			return err
 		}
@@ -38,8 +41,7 @@ func runProfileDeleteCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Printf("Profile '%s' deleted.\n", name)
-	return nil
+	return output.Print(fmt.Sprintf("Profile '%s' deleted.", name), format, noColor)
 }
 
 func resolveProfileNameToDelete(args []string, interactive bool) (string, error) {
@@ -58,7 +60,7 @@ func resolveProfileNameToDelete(args []string, interactive bool) (string, error)
 			return "", fmt.Errorf("no profiles to delete")
 		}
 
-		name, err = prompt.SelectString("Select a profile to delete", profiles)
+		name, err = style.SelectString("Select a profile to delete", profiles)
 		if err != nil {
 			return "", err
 		}
@@ -71,8 +73,8 @@ func resolveProfileNameToDelete(args []string, interactive bool) (string, error)
 	return name, nil
 }
 
-func confirmDeleteProfile(name string) (bool, error) {
-	confirmed, err := prompt.Confirm(fmt.Sprintf("Delete profile '%s'?", name))
+func confirmDeleteProfile(name, format string, noColor bool) (bool, error) {
+	confirmed, err := style.Confirm(fmt.Sprintf("Delete profile '%s'?", name))
 	if err != nil {
 		return false, err
 	}
@@ -81,7 +83,10 @@ func confirmDeleteProfile(name string) (bool, error) {
 		return false, nil
 	}
 
-	fmt.Println("Cancelled.")
+	if err := output.Print("Cancelled.", format, noColor); err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 

@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
-	"github.com/rewritestudios/cli/internal/prompt"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +18,8 @@ var switchCmd = &cobra.Command{
 
 func runSwitchCommand(cmd *cobra.Command, args []string) error {
 	interactive, _ := cmd.Flags().GetBool("interactive")
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
 
 	name, err := resolveSwitchProfileName(args, interactive)
 	if err != nil {
@@ -27,8 +30,7 @@ func runSwitchCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Printf("Switched to profile '%s'\n", name)
-	return nil
+	return output.Print(fmt.Sprintf("Switched to profile '%s'", name), format, noColor)
 }
 
 func resolveSwitchProfileName(args []string, interactive bool) (string, error) {
@@ -47,7 +49,7 @@ func resolveSwitchProfileName(args []string, interactive bool) (string, error) {
 			return "", fmt.Errorf("no profiles to switch")
 		}
 
-		name, err = prompt.SelectString("Select a profile", profiles)
+		name, err = style.SelectString("Select a profile", profiles)
 		if err != nil {
 			return "", err
 		}

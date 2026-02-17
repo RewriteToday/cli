@@ -1,4 +1,4 @@
-package prompt
+package style
 
 import (
 	"fmt"
@@ -14,7 +14,6 @@ func InputString(title, placeholder string) (string, error) {
 		Placeholder(placeholder).
 		Value(&value).
 		Run()
-
 	if err != nil {
 		return "", fmt.Errorf("input cancelled: %w", err)
 	}
@@ -35,7 +34,6 @@ func SelectString(title string, options []string) (string, error) {
 		Options(opts...).
 		Value(&value).
 		Run()
-
 	if err != nil {
 		return "", fmt.Errorf("selection cancelled: %w", err)
 	}
@@ -50,7 +48,6 @@ func Confirm(title string) (bool, error) {
 		Title(title).
 		Value(&value).
 		Run()
-
 	if err != nil {
 		return false, fmt.Errorf("confirmation cancelled: %w", err)
 	}

@@ -8,10 +8,10 @@ import (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update Rewrite CLI to the latest version",
-	RunE:  runUpdateCommand,
+	RunE:  runUpdate,
 }
 
-func runUpdateCommand(cmd *cobra.Command, _ []string) error {
+func runUpdate(cmd *cobra.Command, _ []string) error {
 	noColor, err := cmd.Flags().GetBool("no-color")
 	if err != nil {
 		return err

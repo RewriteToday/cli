@@ -63,7 +63,7 @@ func listen(format string, noColor bool) error {
 			event.EventType = "event.received"
 		}
 
-		if err := output.Print(event, "text", noColor); err != nil {
+		if err := output.Print(event, format, noColor); err != nil {
 			fmt.Println(string(body))
 		}
 

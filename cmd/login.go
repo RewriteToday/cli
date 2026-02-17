@@ -6,7 +6,7 @@ import (
 	"github.com/rewritestudios/cli/internal/auth"
 	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
-	"github.com/rewritestudios/cli/internal/prompt"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -40,8 +40,6 @@ func runLoginCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to set active profile: %w", err)
 	}
 
-	fmt.Printf("Logged in as '%s'\n", name)
-
 	return output.Print(output.ProfileInfo{
 		Name:   name,
 		APIKey: apiKey,
@@ -54,7 +52,7 @@ func resolveLoginProfileName(args []string, interactive bool) (string, error) {
 	}
 
 	if interactive {
-		return prompt.InputString("Profile name", "my-profile")
+		return style.InputString("Profile name", "my-profile")
 	}
 
 	return profile.GenerateRandomName(), nil

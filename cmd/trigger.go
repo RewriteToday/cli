@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/rewritestudios/cli/internal/api"
-	"github.com/rewritestudios/cli/internal/prompt"
+	"github.com/rewritestudios/cli/internal/output"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +18,8 @@ var triggerCmd = &cobra.Command{
 
 func runTriggerCommand(cmd *cobra.Command, args []string) error {
 	interactive, _ := cmd.Flags().GetBool("interactive")
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
 
 	eventTypeStr, err := resolveTriggerEventType(args, interactive)
 	if err != nil {
@@ -42,8 +45,7 @@ func runTriggerCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Printf("Event '%s' triggered successfully.\n", eventType)
-	return nil
+	return output.Print(fmt.Sprintf("Event '%s' triggered successfully.", eventType), format, noColor)
 }
 
 func resolveTriggerEventType(args []string, interactive bool) (string, error) {
@@ -53,7 +55,7 @@ func resolveTriggerEventType(args []string, interactive bool) (string, error) {
 	}
 
 	if eventTypeStr == "" && interactive {
-		selected, err := prompt.SelectString("Select an event type", api.SupportedEventStrings())
+		selected, err := style.SelectString("Select an event type", api.SupportedEventStrings())
 		if err != nil {
 			return "", err
 		}
@@ -73,7 +75,7 @@ func buildTriggerPayload(eventType api.EventType, eventTypeStr string, interacti
 		return data, nil
 	}
 
-	override, err := prompt.TriggerEventForm(eventTypeStr)
+	override, err := style.TriggerEventForm(eventTypeStr)
 	if err != nil {
 		return nil, err
 	}

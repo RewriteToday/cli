@@ -62,7 +62,7 @@ func buildLogsTailHandler(format string, noColor bool) http.Handler {
 			entry.Timestamp = time.Now().Format(time.RFC3339)
 		}
 
-		if err := output.Print(entry, "text", noColor); err != nil {
+		if err := output.Print(entry, format, noColor); err != nil {
 			fmt.Println(string(body))
 		}
 
