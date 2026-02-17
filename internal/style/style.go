@@ -1,3 +1,5 @@
+// Package style centralizes interactive prompt UI helpers for commands.
+// Keep prompt-related integrations (e.g. huh) in this file.
 package style
 
 import (
