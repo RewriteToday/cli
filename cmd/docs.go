@@ -11,15 +11,17 @@ import (
 var docsCmd = &cobra.Command{
 	Use:   "docs",
 	Short: "Open the Rewrite documentation in your browser",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Printf("Opening %s\n", config.DocsURL)
+	RunE:  runDocsCommand,
+}
 
-		if err := browser.OpenURL(config.DocsURL); err != nil {
-			fmt.Printf("Could not open browser. Visit: %s\n", config.DocsURL)
-		}
+func runDocsCommand(_ *cobra.Command, _ []string) error {
+	fmt.Printf("Opening %s\n", config.DocsURL)
 
-		return nil
-	},
+	if err := browser.OpenURL(config.DocsURL); err != nil {
+		fmt.Printf("Could not open browser. Visit: %s\n", config.DocsURL)
+	}
+
+	return nil
 }
 
 func init() {

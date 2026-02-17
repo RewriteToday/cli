@@ -12,58 +12,79 @@ var triggerCmd = &cobra.Command{
 	Use:   "trigger <event-type>",
 	Short: "Trigger a test event",
 	Args:  cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		interactive, _ := cmd.Flags().GetBool("interactive")
+	RunE:  runTriggerCommand,
+}
 
-		var eventTypeStr string
+func runTriggerCommand(cmd *cobra.Command, args []string) error {
+	interactive, _ := cmd.Flags().GetBool("interactive")
 
-		if len(args) > 0 {
-			eventTypeStr = args[0]
-		}
+	eventTypeStr, err := resolveTriggerEventType(args, interactive)
+	if err != nil {
+		return err
+	}
 
-		if eventTypeStr == "" && interactive {
-			var err error
-			eventTypeStr, err = prompt.SelectString("Select an event type", api.SupportedEventStrings())
-			if err != nil {
-				return err
-			}
-		}
+	eventType, err := api.ValidateEventType(eventTypeStr)
+	if err != nil {
+		return err
+	}
 
-		if eventTypeStr == "" {
-			return fmt.Errorf("event type required (or use -i for interactive mode)")
-		}
+	data, err := buildTriggerPayload(eventType, eventTypeStr, interactive)
+	if err != nil {
+		return err
+	}
 
-		eventType, err := api.ValidateEventType(eventTypeStr)
+	client, err := api.New()
+	if err != nil {
+		return err
+	}
+
+	if err := client.TriggerEvent(eventType, data); err != nil {
+		return err
+	}
+
+	fmt.Printf("Event '%s' triggered successfully.\n", eventType)
+	return nil
+}
+
+func resolveTriggerEventType(args []string, interactive bool) (string, error) {
+	var eventTypeStr string
+	if len(args) > 0 {
+		eventTypeStr = args[0]
+	}
+
+	if eventTypeStr == "" && interactive {
+		selected, err := prompt.SelectString("Select an event type", api.SupportedEventStrings())
 		if err != nil {
-			return err
+			return "", err
 		}
+		eventTypeStr = selected
+	}
 
-		data := api.MockData(eventType)
+	if eventTypeStr == "" {
+		return "", fmt.Errorf("event type required (or use -i for interactive mode)")
+	}
 
-		if interactive {
-			override, err := prompt.TriggerEventForm(eventTypeStr)
-			if err != nil {
-				return err
-			}
-			for k, v := range override {
-				if v != "" {
-					data[k] = v
-				}
-			}
+	return eventTypeStr, nil
+}
+
+func buildTriggerPayload(eventType api.EventType, eventTypeStr string, interactive bool) (map[string]interface{}, error) {
+	data := api.MockData(eventType)
+	if !interactive {
+		return data, nil
+	}
+
+	override, err := prompt.TriggerEventForm(eventTypeStr)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range override {
+		if v != "" {
+			data[k] = v
 		}
+	}
 
-		client, err := api.New()
-		if err != nil {
-			return err
-		}
-
-		if err := client.TriggerEvent(eventType, data); err != nil {
-			return err
-		}
-
-		fmt.Printf("Event '%s' triggered successfully.\n", eventType)
-		return nil
-	},
+	return data, nil
 }
 
 func init() {

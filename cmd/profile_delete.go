@@ -13,53 +13,76 @@ var profileDelCmd = &cobra.Command{
 	Aliases: []string{"del"},
 	Short:   "Delete a profile",
 	Args:    cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		interactive, _ := cmd.Flags().GetBool("interactive")
+	RunE:    runProfileDeleteCommand,
+}
 
-		var name string
+func runProfileDeleteCommand(cmd *cobra.Command, args []string) error {
+	interactive, _ := cmd.Flags().GetBool("interactive")
 
-		if len(args) > 0 {
-			name = args[0]
-		}
+	name, err := resolveProfileNameToDelete(args, interactive)
+	if err != nil {
+		return err
+	}
 
-		if name == "" && interactive {
-			profiles, err := profile.List()
-			if err != nil {
-				return err
-			}
-
-			if len(profiles) == 0 {
-				return fmt.Errorf("no profiles to delete")
-			}
-
-			name, err = prompt.SelectString("Select a profile to delete", profiles)
-			if err != nil {
-				return err
-			}
-		}
-
-		if name == "" {
-			return fmt.Errorf("profile name required (or use -i for interactive mode)")
-		}
-
-		if interactive {
-			confirmed, err := prompt.Confirm(fmt.Sprintf("Delete profile '%s'?", name))
-			if err != nil {
-				return err
-			}
-			if !confirmed {
-				fmt.Println("Cancelled.")
-				return nil
-			}
-		}
-
-		if err := profile.Delete(name); err != nil {
+	if interactive {
+		cancelled, err := confirmDeleteProfile(name)
+		if err != nil {
 			return err
 		}
+		if cancelled {
+			return nil
+		}
+	}
 
-		fmt.Printf("Profile '%s' deleted.\n", name)
-		return nil
-	},
+	if err := profile.Delete(name); err != nil {
+		return err
+	}
+
+	fmt.Printf("Profile '%s' deleted.\n", name)
+	return nil
+}
+
+func resolveProfileNameToDelete(args []string, interactive bool) (string, error) {
+	var name string
+	if len(args) > 0 {
+		name = args[0]
+	}
+
+	if name == "" && interactive {
+		profiles, err := profile.List()
+		if err != nil {
+			return "", err
+		}
+
+		if len(profiles) == 0 {
+			return "", fmt.Errorf("no profiles to delete")
+		}
+
+		name, err = prompt.SelectString("Select a profile to delete", profiles)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	if name == "" {
+		return "", fmt.Errorf("profile name required (or use -i for interactive mode)")
+	}
+
+	return name, nil
+}
+
+func confirmDeleteProfile(name string) (bool, error) {
+	confirmed, err := prompt.Confirm(fmt.Sprintf("Delete profile '%s'?", name))
+	if err != nil {
+		return false, err
+	}
+
+	if confirmed {
+		return false, nil
+	}
+
+	fmt.Println("Cancelled.")
+	return true, nil
 }
 
 func init() {

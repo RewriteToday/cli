@@ -15,51 +15,59 @@ import (
 var logsTailCmd = &cobra.Command{
 	Use:   "tail",
 	Short: "Receive logs via webhook in real-time",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
-		noColor, _ := cmd.Flags().GetBool("no-color")
+	RunE:  runLogsTailCommand,
+}
 
-		const route = "/logs/tail"
-		fmt.Printf("Waiting for webhook logs at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
+func runLogsTailCommand(cmd *cobra.Command, _ []string) error {
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
+	return tailLogs(format, noColor)
+}
 
-		return network.Serve(route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Method != http.MethodPost {
-				http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-				return
-			}
+func tailLogs(format string, noColor bool) error {
+	const route = "/logs/tail"
+	fmt.Printf("Waiting for webhook logs at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
+	return network.Serve(route, buildLogsTailHandler(format, noColor))
+}
 
-			defer r.Body.Close()
+func buildLogsTailHandler(format string, noColor bool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "failed to read request body", http.StatusBadRequest)
-				return
-			}
+		defer r.Body.Close()
 
-			if format == "json" {
-				fmt.Println(string(body))
-				w.WriteHeader(http.StatusAccepted)
-				return
-			}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "failed to read request body", http.StatusBadRequest)
+			return
+		}
 
-			var entry output.LogEntry
-			if err := json.Unmarshal(body, &entry); err != nil {
-				fmt.Println(string(body))
-				w.WriteHeader(http.StatusAccepted)
-				return
-			}
-
-			if entry.Timestamp == "" {
-				entry.Timestamp = time.Now().Format(time.RFC3339)
-			}
-
-			if err := output.Print(entry, "text", noColor); err != nil {
-				fmt.Println(string(body))
-			}
-
+		if format == "json" {
+			fmt.Println(string(body))
 			w.WriteHeader(http.StatusAccepted)
-		}))
-	},
+			return
+		}
+
+		var entry output.LogEntry
+		if err := json.Unmarshal(body, &entry); err != nil {
+			fmt.Println(string(body))
+			w.WriteHeader(http.StatusAccepted)
+			return
+		}
+
+		if entry.Timestamp == "" {
+			entry.Timestamp = time.Now().Format(time.RFC3339)
+		}
+
+		if err := output.Print(entry, "text", noColor); err != nil {
+			fmt.Println(string(body))
+		}
+
+		w.WriteHeader(http.StatusAccepted)
+	})
 }
 
 func init() {

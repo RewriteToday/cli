@@ -9,34 +9,41 @@ import (
 var logsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List recent logs",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
-		noColor, _ := cmd.Flags().GetBool("no-color")
-		limit, _ := cmd.Flags().GetInt("limit")
+	RunE:  runLogsListCommand,
+}
 
-		client, err := api.New()
-		if err != nil {
-			return err
+func runLogsListCommand(cmd *cobra.Command, _ []string) error {
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
+	limit, _ := cmd.Flags().GetInt("limit")
+
+	client, err := api.New()
+	if err != nil {
+		return err
+	}
+
+	logs, _, err := client.ListLogs(limit, "")
+	if err != nil {
+		return err
+	}
+
+	items := buildLogEntries(logs)
+	return output.Print(items, format, noColor)
+}
+
+func buildLogEntries(logs []api.LogEntry) []output.LogEntry {
+	items := make([]output.LogEntry, len(logs))
+	for i, l := range logs {
+		items[i] = output.LogEntry{
+			ID:        l.ID,
+			Timestamp: l.Timestamp,
+			EventType: l.EventType,
+			Status:    l.Status,
+			Payload:   l.Payload,
 		}
+	}
 
-		logs, _, err := client.ListLogs(limit, "")
-		if err != nil {
-			return err
-		}
-
-		items := make([]output.LogEntry, len(logs))
-		for i, l := range logs {
-			items[i] = output.LogEntry{
-				ID:        l.ID,
-				Timestamp: l.Timestamp,
-				EventType: l.EventType,
-				Status:    l.Status,
-				Payload:   l.Payload,
-			}
-		}
-
-		return output.Print(items, format, noColor)
-	},
+	return items
 }
 
 func init() {

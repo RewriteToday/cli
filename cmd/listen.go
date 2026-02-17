@@ -15,55 +15,60 @@ import (
 var listenCmd = &cobra.Command{
 	Use:   "listen",
 	Short: "Listen for real-time events",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
-		noColor, _ := cmd.Flags().GetBool("no-color")
+	RunE:  runListenCommand,
+}
 
-		const route = "/events/listen"
-		fmt.Printf("Waiting for webhook events at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
+func runListenCommand(cmd *cobra.Command, _ []string) error {
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
+	return listen(format, noColor)
+}
 
-		return network.Serve(route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Method != http.MethodPost {
-				http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-				return
-			}
+func listen(format string, noColor bool) error {
+	const route = "/events/listen"
+	fmt.Printf("Waiting for webhook events at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
 
-			defer r.Body.Close()
+	return network.Serve(route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "failed to read request body", http.StatusBadRequest)
-				return
-			}
+		defer r.Body.Close()
 
-			if format == "json" {
-				fmt.Println(string(body))
-				w.WriteHeader(http.StatusAccepted)
-				return
-			}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "failed to read request body", http.StatusBadRequest)
+			return
+		}
 
-			var event output.EventMessage
-			if err := json.Unmarshal(body, &event); err != nil {
-				fmt.Println(string(body))
-				w.WriteHeader(http.StatusAccepted)
-				return
-			}
-
-			if event.Timestamp == "" {
-				event.Timestamp = time.Now().Format(time.RFC3339)
-			}
-
-			if event.EventType == "" {
-				event.EventType = "event.received"
-			}
-
-			if err := output.Print(event, "text", noColor); err != nil {
-				fmt.Println(string(body))
-			}
-
+		if format == "json" {
+			fmt.Println(string(body))
 			w.WriteHeader(http.StatusAccepted)
-		}))
-	},
+			return
+		}
+
+		var event output.EventMessage
+		if err := json.Unmarshal(body, &event); err != nil {
+			fmt.Println(string(body))
+			w.WriteHeader(http.StatusAccepted)
+			return
+		}
+
+		if event.Timestamp == "" {
+			event.Timestamp = time.Now().Format(time.RFC3339)
+		}
+
+		if event.EventType == "" {
+			event.EventType = "event.received"
+		}
+
+		if err := output.Print(event, "text", noColor); err != nil {
+			fmt.Println(string(body))
+		}
+
+		w.WriteHeader(http.StatusAccepted)
+	}))
 }
 
 func init() {

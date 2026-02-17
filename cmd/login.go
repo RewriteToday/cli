@@ -14,47 +14,50 @@ var loginCmd = &cobra.Command{
 	Use:   "login [profile-name]",
 	Short: "Authenticate with Rewrite and save a profile",
 	Args:  cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		interactive, _ := cmd.Flags().GetBool("interactive")
-		format, _ := cmd.Flags().GetString("output")
+	RunE:  runLoginCommand,
+}
 
-		var name string
+func runLoginCommand(cmd *cobra.Command, args []string) error {
+	interactive, _ := cmd.Flags().GetBool("interactive")
+	format, _ := cmd.Flags().GetString("output")
+	noColor, _ := cmd.Flags().GetBool("no-color")
 
-		name = args[0]
-		if interactive {
-			var err error
+	name, err := resolveLoginProfileName(args, interactive)
+	if err != nil {
+		return err
+	}
 
-			name, err = prompt.InputString("Profile name", "my-profile")
-			if err != nil {
-				return err
-			}
-		}
+	apiKey, err := auth.RunOAuthFlow()
+	if err != nil {
+		return fmt.Errorf("authentication failed: %w", err)
+	}
 
-		if len(args) == 0 {
-			name = profile.GenerateRandomName()
-		}
+	if err := profile.Save(name, apiKey); err != nil {
+		return fmt.Errorf("failed to save profile: %w", err)
+	}
 
-		apiKey, err := auth.RunOAuthFlow()
-		if err != nil {
-			return fmt.Errorf("authentication failed: %w", err)
-		}
+	if err := profile.SetActive(name); err != nil {
+		return fmt.Errorf("failed to set active profile: %w", err)
+	}
 
-		if err := profile.Save(name, apiKey); err != nil {
-			return fmt.Errorf("failed to save profile: %w", err)
-		}
+	fmt.Printf("Logged in as '%s'\n", name)
 
-		if err := profile.SetActive(name); err != nil {
-			return fmt.Errorf("failed to set active profile: %w", err)
-		}
+	return output.Print(output.ProfileInfo{
+		Name:   name,
+		APIKey: apiKey,
+	}, format, noColor)
+}
 
-		fmt.Printf("Logged in as '%s'\n", name)
+func resolveLoginProfileName(args []string, interactive bool) (string, error) {
+	if len(args) > 0 {
+		return args[0], nil
+	}
 
-		noColor, _ := cmd.Flags().GetBool("no-color")
-		return output.Print(output.ProfileInfo{
-			Name:   name,
-			APIKey: apiKey,
-		}, format, noColor)
-	},
+	if interactive {
+		return prompt.InputString("Profile name", "my-profile")
+	}
+
+	return profile.GenerateRandomName(), nil
 }
 
 func init() {
