@@ -1,4 +1,4 @@
-module github.com/rewritestudios/cli
+module github.com/RewriteToday/cli
 
 go 1.24.11
 

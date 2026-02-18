@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rewritestudios/cli/internal/version"
+	"github.com/RewriteToday/cli/internal/version"
 	"github.com/spf13/cobra"
 )
 

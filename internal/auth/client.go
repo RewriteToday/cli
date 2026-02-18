@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/rewritestudios/cli/internal/profile"
+	"github.com/RewriteToday/cli/internal/profile"
 )
 
 type authTransport struct {

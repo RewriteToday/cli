@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/rewritestudios/cli/internal/api"
-	"github.com/rewritestudios/cli/internal/style"
+	"github.com/RewriteToday/cli/internal/api"
+	"github.com/RewriteToday/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 

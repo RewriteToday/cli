@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/pkg/browser"
-	"github.com/rewritestudios/cli/internal/config"
-	"github.com/rewritestudios/cli/internal/style"
+	"github.com/RewriteToday/cli/internal/config"
+	"github.com/RewriteToday/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 

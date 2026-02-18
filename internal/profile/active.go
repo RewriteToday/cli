@@ -3,7 +3,7 @@ package profile
 import (
 	"fmt"
 
-	"github.com/rewritestudios/cli/internal/config"
+	"github.com/RewriteToday/cli/internal/config"
 )
 
 func GetActive() (string, string, error) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rewritestudios/cli/cmd"
+	"github.com/RewriteToday/cli/cmd"
 )
 
 func main() {

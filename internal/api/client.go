@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/rewritestudios/cli/internal/profile"
+	"github.com/RewriteToday/cli/internal/profile"
 )
 
 type Client struct {

@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/rewritestudios/cli/internal/auth"
-	"github.com/rewritestudios/cli/internal/profile"
-	"github.com/rewritestudios/cli/internal/style"
+	"github.com/RewriteToday/cli/internal/auth"
+	"github.com/RewriteToday/cli/internal/profile"
+	"github.com/RewriteToday/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 

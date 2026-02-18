@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rewritestudios/cli/internal/config"
+	"github.com/RewriteToday/cli/internal/config"
 	"github.com/zalando/go-keyring"
 )
 

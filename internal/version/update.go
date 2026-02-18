@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/rewritestudios/cli/internal/render"
+	"github.com/RewriteToday/cli/internal/render"
 )
 
 func Update(noColor bool) error {

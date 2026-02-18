@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rewritestudios/cli/internal/network"
-	"github.com/rewritestudios/cli/internal/style"
+	"github.com/RewriteToday/cli/internal/network"
+	"github.com/RewriteToday/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
