@@ -6,7 +6,6 @@ require (
 	github.com/alecthomas/chroma/v2 v2.23.1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/charmbracelet/huh v0.8.0
-	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/spf13/cobra v1.10.2
 	github.com/zalando/go-keyring v0.2.6
