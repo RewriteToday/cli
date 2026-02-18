@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/pkg/browser"
 	"github.com/RewriteToday/cli/internal/config"
 	"github.com/RewriteToday/cli/internal/style"
+	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 )
 

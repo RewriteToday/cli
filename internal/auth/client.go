@@ -8,8 +8,8 @@ import (
 )
 
 type authTransport struct {
-	apiKey    string
-	wrapped  http.RoundTripper
+	apiKey  string
+	wrapped http.RoundTripper
 }
 
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {

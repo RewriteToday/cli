@@ -7,11 +7,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/RewriteToday/cli/internal/render"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/huh"
-	"github.com/RewriteToday/cli/internal/render"
 )
 
 func InputString(title, placeholder string) (string, error) {

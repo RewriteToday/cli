@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/RewriteToday/cli/internal/version"
+	"github.com/RewriteToday/cli/internal/commands/update"
 	"github.com/spf13/cobra"
 )
 
@@ -13,11 +13,12 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, _ []string) error {
 	noColor, err := cmd.Flags().GetBool("no-color")
+
 	if err != nil {
 		return err
 	}
 
-	return version.Update(noColor)
+	return update.Update(noColor)
 }
 
 func init() {
