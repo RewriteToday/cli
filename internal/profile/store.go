@@ -2,59 +2,50 @@ package profile
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/rewritestudios/cli/internal/config"
+	"github.com/zalando/go-keyring"
 )
 
-var (
-	mu    = sync.Mutex{}
-	store = map[string]string{
-		"cosmic-falcon":    "rw_live_demo_key_abc123xyz789",
-		config.ProfilesKey: `["cosmic-falcon"]`,
-		config.ActiveKey:   "cosmic-falcon",
-	}
-)
+const profileKeyPrefix = "profile:"
 
 func kSet(key, val string) error {
-	mu.Lock()
-	defer mu.Unlock()
-	store[key] = val
-	return nil
+	return keyring.Set(config.KeyringService, key, val)
 }
 
 func kGet(key string) (string, error) {
-	mu.Lock()
-	defer mu.Unlock()
-
-	val, ok := store[key]
-	if !ok {
+	val, err := keyring.Get(config.KeyringService, key)
+	if errors.Is(err, keyring.ErrNotFound) {
 		return "", fmt.Errorf("key '%s' not found", key)
+	}
+	if err != nil {
+		return "", err
 	}
 
 	return val, nil
 }
 
 func kDel(key string) error {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if _, ok := store[key]; !ok {
+	err := keyring.Delete(config.KeyringService, key)
+	if errors.Is(err, keyring.ErrNotFound) {
 		return fmt.Errorf("key '%s' not found", key)
 	}
+	if err != nil {
+		return err
+	}
 
-	delete(store, key)
 	return nil
 }
 
 func Save(name, apiKey string) error {
-	if strings.HasPrefix(name, "__") {
-		return fmt.Errorf("profile name cannot start with '__'")
+	if err := validateProfileName(name); err != nil {
+		return err
 	}
 
-	if err := kSet(name, apiKey); err != nil {
+	if err := kSet(profileKey(name), apiKey); err != nil {
 		return fmt.Errorf("failed to save profile: %w", err)
 	}
 
@@ -72,7 +63,7 @@ func Save(name, apiKey string) error {
 }
 
 func Get(name string) (string, error) {
-	key, err := kGet(name)
+	key, err := kGet(profileKey(name))
 	if err != nil {
 		return "", fmt.Errorf("profile '%s' not found: %w", name, err)
 	}
@@ -81,7 +72,7 @@ func Get(name string) (string, error) {
 }
 
 func Delete(name string) error {
-	if err := kDel(name); err != nil {
+	if err := kDel(profileKey(name)); err != nil {
 		return fmt.Errorf("failed to delete profile '%s': %w", name, err)
 	}
 
@@ -132,4 +123,19 @@ func saveProfileList(profiles []string) error {
 	}
 
 	return kSet(config.ProfilesKey, string(data))
+}
+
+func profileKey(name string) string {
+	return profileKeyPrefix + name
+}
+
+func validateProfileName(name string) error {
+	if strings.HasPrefix(name, "__") {
+		return fmt.Errorf("profile name cannot start with '__'")
+	}
+	if strings.HasPrefix(name, profileKeyPrefix) {
+		return fmt.Errorf("profile name cannot start with '%s'", profileKeyPrefix)
+	}
+
+	return nil
 }

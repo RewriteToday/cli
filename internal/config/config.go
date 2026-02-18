@@ -5,5 +5,5 @@ const (
 	DocsURL        = "https://docs.rewritetoday.com"
 	KeyringService = "rewrite-cli"
 	ProfilesKey    = "rewrite_profiles"
-	ActiveKey      = ""
+	ActiveKey      = "rewrite_active_profile"
 )
