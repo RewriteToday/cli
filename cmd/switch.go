@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
 	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
@@ -30,7 +29,7 @@ func runSwitchCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return output.Print(fmt.Sprintf("Switched to profile '%s'", name), format, noColor)
+	return style.Print(fmt.Sprintf("Switched to profile '%s'", name), format, noColor)
 }
 
 func resolveSwitchProfileName(args []string, interactive bool) (string, error) {

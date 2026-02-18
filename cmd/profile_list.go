@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -22,16 +22,16 @@ func runProfileListCommand(cmd *cobra.Command, _ []string) error {
 	}
 
 	items := buildProfileListItems(profiles)
-	return output.Print(items, format, noColor)
+	return style.Print(items, format, noColor)
 }
 
-func buildProfileListItems(profiles []string) []output.ProfileListItem {
+func buildProfileListItems(profiles []string) []style.ProfileListItem {
 	activeName, _, _ := profile.GetActive()
-	items := make([]output.ProfileListItem, len(profiles))
+	items := make([]style.ProfileListItem, len(profiles))
 
 	for i, p := range profiles {
 		apiKey, _ := profile.Get(p)
-		items[i] = output.ProfileListItem{
+		items[i] = style.ProfileListItem{
 			Name:   p,
 			APIKey: apiKey,
 			Active: p == activeName,

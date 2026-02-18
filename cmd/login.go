@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/rewritestudios/cli/internal/auth"
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
 	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
@@ -40,7 +39,7 @@ func runLoginCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to set active profile: %w", err)
 	}
 
-	return output.Print(output.ProfileInfo{
+	return style.Print(style.ProfileInfo{
 		Name:   name,
 		APIKey: apiKey,
 	}, format, noColor)

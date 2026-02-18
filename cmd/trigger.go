@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/rewritestudios/cli/internal/api"
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
@@ -45,7 +44,7 @@ func runTriggerCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return output.Print(fmt.Sprintf("Event '%s' triggered successfully.", eventType), format, noColor)
+	return style.Print(fmt.Sprintf("Event '%s' triggered successfully.", eventType), format, noColor)
 }
 
 func resolveTriggerEventType(args []string, interactive bool) (string, error) {

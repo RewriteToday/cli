@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/rewritestudios/cli/internal/config"
-	"github.com/rewritestudios/cli/internal/output"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -19,12 +19,12 @@ func runDocsCommand(cmd *cobra.Command, _ []string) error {
 	format, _ := cmd.Flags().GetString("output")
 	noColor, _ := cmd.Flags().GetBool("no-color")
 
-	if err := output.Print(fmt.Sprintf("Opening %s", config.DocsURL), format, noColor); err != nil {
+	if err := style.Print(fmt.Sprintf("Opening %s", config.DocsURL), format, noColor); err != nil {
 		return err
 	}
 
 	if err := browser.OpenURL(config.DocsURL); err != nil {
-		return output.Print(fmt.Sprintf("Could not open browser. Visit: %s", config.DocsURL), format, noColor)
+		return style.Print(fmt.Sprintf("Could not open browser. Visit: %s", config.DocsURL), format, noColor)
 	}
 
 	return nil

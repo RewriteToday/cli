@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
 	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
@@ -41,7 +40,7 @@ func runProfileDeleteCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return output.Print(fmt.Sprintf("Profile '%s' deleted.", name), format, noColor)
+	return style.Print(fmt.Sprintf("Profile '%s' deleted.", name), format, noColor)
 }
 
 func resolveProfileNameToDelete(args []string, interactive bool) (string, error) {
@@ -83,7 +82,7 @@ func confirmDeleteProfile(name, format string, noColor bool) (bool, error) {
 		return false, nil
 	}
 
-	if err := output.Print("Cancelled.", format, noColor); err != nil {
+	if err := style.Print("Cancelled.", format, noColor); err != nil {
 		return false, err
 	}
 

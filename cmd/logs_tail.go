@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/rewritestudios/cli/internal/network"
-	"github.com/rewritestudios/cli/internal/output"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -51,7 +51,7 @@ func buildLogsTailHandler(format string, noColor bool) http.Handler {
 			return
 		}
 
-		var entry output.LogEntry
+		var entry style.LogEntry
 		if err := json.Unmarshal(body, &entry); err != nil {
 			fmt.Println(string(body))
 			w.WriteHeader(http.StatusAccepted)
@@ -62,7 +62,7 @@ func buildLogsTailHandler(format string, noColor bool) http.Handler {
 			entry.Timestamp = time.Now().Format(time.RFC3339)
 		}
 
-		if err := output.Print(entry, format, noColor); err != nil {
+		if err := style.Print(entry, format, noColor); err != nil {
 			fmt.Println(string(body))
 		}
 

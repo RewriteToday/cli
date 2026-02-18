@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/rewritestudios/cli/internal/output"
 	"github.com/rewritestudios/cli/internal/profile"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ func runWhoamiCommand(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	return output.Print(output.ProfileInfo{
+	return style.Print(style.ProfileInfo{
 		Name:   name,
 		APIKey: apiKey,
 	}, format, noColor)

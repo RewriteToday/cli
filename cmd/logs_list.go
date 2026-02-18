@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/rewritestudios/cli/internal/api"
-	"github.com/rewritestudios/cli/internal/output"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -28,13 +28,13 @@ func runLogsListCommand(cmd *cobra.Command, _ []string) error {
 	}
 
 	items := buildLogEntries(logs)
-	return output.Print(items, format, noColor)
+	return style.Print(items, format, noColor)
 }
 
-func buildLogEntries(logs []api.LogEntry) []output.LogEntry {
-	items := make([]output.LogEntry, len(logs))
+func buildLogEntries(logs []api.LogEntry) []style.LogEntry {
+	items := make([]style.LogEntry, len(logs))
 	for i, l := range logs {
-		items[i] = output.LogEntry{
+		items[i] = style.LogEntry{
 			ID:        l.ID,
 			Timestamp: l.Timestamp,
 			EventType: l.EventType,

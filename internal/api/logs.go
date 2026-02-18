@@ -13,11 +13,6 @@ type LogEntry struct {
 	Payload   any    `json:"payload,omitempty"`
 }
 
-type logsResponse struct {
-	Logs       []LogEntry `json:"logs"`
-	NextCursor string     `json:"next_cursor,omitempty"`
-}
-
 func (c *Client) ListLogs(limit int, cursor string) ([]LogEntry, string, error) {
 	if limit < 0 {
 		limit = 0

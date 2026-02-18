@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/rewritestudios/cli/internal/network"
-	"github.com/rewritestudios/cli/internal/output"
+	"github.com/rewritestudios/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func listen(format string, noColor bool) error {
 			return
 		}
 
-		var event output.EventMessage
+		var event style.EventMessage
 		if err := json.Unmarshal(body, &event); err != nil {
 			fmt.Println(string(body))
 			w.WriteHeader(http.StatusAccepted)
@@ -63,7 +63,7 @@ func listen(format string, noColor bool) error {
 			event.EventType = "event.received"
 		}
 
-		if err := output.Print(event, format, noColor); err != nil {
+		if err := style.Print(event, format, noColor); err != nil {
 			fmt.Println(string(body))
 		}
 
