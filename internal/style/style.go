@@ -245,27 +245,24 @@ func formatPayload(payload any) string {
 	return string(data)
 }
 
-const vesperStyleName = "vesper-rewrite"
+const vesperStyleName = "rewrite-json-minimal"
 
 var registerVesperStyleOnce sync.Once
 
 func ensureVesperStyleRegistered() {
 	registerVesperStyleOnce.Do(func() {
-		if styles.Get(vesperStyleName) != nil {
-			return
-		}
-
 		styles.Register(chroma.MustNewStyle(vesperStyleName, chroma.StyleEntries{
-			chroma.Background:          "#101010 bg:#101010",
-			chroma.Text:                "#d5d5d5",
-			chroma.Punctuation:         "#7f848e",
-			chroma.Operator:            "#7f848e",
-			chroma.NameTag:             "#76a6ff",
-			chroma.LiteralString:       "#99c794",
-			chroma.LiteralStringDouble: "#99c794",
-			chroma.LiteralNumber:       "#f7ad7a",
-			chroma.Keyword:             "#c099ff",
-			chroma.KeywordConstant:     "#c099ff",
+			chroma.Background:           "#0b0b0d bg:#0b0b0d",
+			chroma.Text:                 "#d4d4d8",
+			chroma.Punctuation:          "#71717a",
+			chroma.Operator:             "#71717a",
+			chroma.NameTag:              "#e4e4e7",
+			chroma.LiteralString:        "#a1a1aa",
+			chroma.LiteralStringDouble:  "#a1a1aa",
+			chroma.LiteralNumber:        "#a1a1aa",
+			chroma.LiteralNumberInteger: "#a1a1aa",
+			chroma.Keyword:              "#a1a1aa",
+			chroma.KeywordConstant:      "#a1a1aa",
 		}))
 	})
 }
