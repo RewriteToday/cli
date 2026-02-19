@@ -17,14 +17,22 @@ func List(opts ListOpts) error {
 		return err
 	}
 
+	activeName, _, _ := profile.GetActive()
 	items := createProfileListItems(profiles)
 
-	return style.Print(items, opts.Format, opts.NoColor)
+	if opts.Format == "json" {
+		jsonItems := createProfileListJSONItems(items, activeName)
+
+		return style.Print(jsonItems, opts.Format, opts.NoColor)
+	}
+
+	return style.Print(style.ProfileListText{
+		ActiveName: activeName,
+		Items:      items,
+	}, opts.Format, opts.NoColor)
 }
 
 func createProfileListItems(profiles []string) []style.ProfileListItem {
-	activeName, _, _ := profile.GetActive()
-
 	items := make([]style.ProfileListItem, len(profiles))
 
 	for i, p := range profiles {
@@ -33,9 +41,22 @@ func createProfileListItems(profiles []string) []style.ProfileListItem {
 		items[i] = style.ProfileListItem{
 			Name:   p,
 			APIKey: apiKey,
-			Active: p == activeName,
 		}
 	}
 
 	return items
+}
+
+func createProfileListJSONItems(items []style.ProfileListItem, activeName string) []style.ProfileListItemJSON {
+	jsonItems := make([]style.ProfileListItemJSON, len(items))
+
+	for i, item := range items {
+		jsonItems[i] = style.ProfileListItemJSON{
+			Name:   item.Name,
+			APIKey: item.APIKey,
+			Active: item.Name == activeName,
+		}
+	}
+
+	return jsonItems
 }

@@ -104,6 +104,16 @@ type ProfileInfo struct {
 type ProfileListItem struct {
 	Name   string `json:"name"`
 	APIKey string `json:"api_key"`
+}
+
+type ProfileListText struct {
+	ActiveName string
+	Items      []ProfileListItem
+}
+
+type ProfileListItemJSON struct {
+	Name   string `json:"name"`
+	APIKey string `json:"api_key"`
 	Active bool   `json:"active"`
 }
 
@@ -181,18 +191,19 @@ func printText(data any, noColor bool) error {
 		fmt.Printf("%s %s\n", render.Paint("Profile:", render.Bold, noColor), v.Name)
 		fmt.Printf("%s %s...\n", render.Paint("API Key:", render.Bold, noColor), maskKey(v.APIKey))
 
-	case []ProfileListItem:
-		if len(v) == 0 {
+	case ProfileListText:
+		if len(v.Items) == 0 {
 			fmt.Println("No profiles found. Run 'rewrite login' to create one.")
 			return nil
 		}
-		for _, p := range v {
+		for _, p := range v.Items {
+			active := p.Name == v.ActiveName
 			marker := "  "
-			if p.Active {
+			if active {
 				marker = render.Paint("* ", render.Purple, noColor)
 			}
 			name := p.Name
-			if p.Active {
+			if active {
 				name = render.Paint(name, render.Bold, noColor)
 			}
 			fmt.Printf("%s%s %s\n", marker, name, render.Paint(maskKey(p.APIKey), render.Gray, noColor))
