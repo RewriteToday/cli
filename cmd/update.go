@@ -6,12 +6,12 @@ import (
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
+	Use:     "update",
 	Aliases: []string{"upgrade"},
-	Short: "Update Rewrite CLI to the latest version",
-	RunE:  func(cmd *cobra.Command, args []string) error {
+	Short:   "Update Rewrite CLI to the latest version",
+	RunE: func(cmd *cobra.Command, args []string) error {
 		noColor, _ := cmd.Flags().GetBool("no-color")
-		
+
 		return update.Update(noColor)
 	},
 }

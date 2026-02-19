@@ -42,7 +42,7 @@ func Update(noColor bool) error {
 		return err
 	}
 
-	fmt.Printf("You're now in the version %s ✨.\n", latest.Version)
+	fmt.Printf("You're now in the version %s ✨. %s\n", latest.Version, render.Hyperlink("Go to the changelog", "https://docs.rewritetoday.com", noColor))
 
 	return nil
 }

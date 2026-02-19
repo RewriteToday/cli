@@ -2,7 +2,7 @@ package render
 
 import "os"
 
-var IS_COLOR_ENABLED = os.Getenv("NO_COLOR") == ""
+var IS_COLOR_ENABLED = os.Getenv("NO_COLOR") == "" || os.Getenv("CI") != ""
 
 const (
 	Reset = "\033[0m"
