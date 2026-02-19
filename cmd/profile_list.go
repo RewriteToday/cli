@@ -1,44 +1,22 @@
 package cmd
 
 import (
-	"github.com/RewriteToday/cli/internal/profile"
-	"github.com/RewriteToday/cli/internal/style"
+	"github.com/RewriteToday/cli/internal/commands/profiles"
 	"github.com/spf13/cobra"
 )
 
 var profileListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all profiles",
-	RunE:  runProfileListCommand,
-}
-
-func runProfileListCommand(cmd *cobra.Command, _ []string) error {
-	format, _ := cmd.Flags().GetString("output")
-	noColor, _ := cmd.Flags().GetBool("no-color")
-
-	profiles, err := profile.List()
-	if err != nil {
-		return err
-	}
-
-	items := buildProfileListItems(profiles)
-	return style.Print(items, format, noColor)
-}
-
-func buildProfileListItems(profiles []string) []style.ProfileListItem {
-	activeName, _, _ := profile.GetActive()
-	items := make([]style.ProfileListItem, len(profiles))
-
-	for i, p := range profiles {
-		apiKey, _ := profile.Get(p)
-		items[i] = style.ProfileListItem{
-			Name:   p,
-			APIKey: apiKey,
-			Active: p == activeName,
-		}
-	}
-
-	return items
+	RunE:  func(cmd *cobra.Command, args []string) error {
+		format, _ := cmd.Flags().GetString("output")
+		noColor, _ := cmd.Flags().GetBool("no-color")
+		
+		return profiles.List(profiles.ListOpts{
+			Format: format,
+			NoColor: noColor,
+		})
+	},
 }
 
 func init() {
