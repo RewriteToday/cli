@@ -38,7 +38,7 @@ func Remove(opts RemoveOpts) error {
 		return err
 	}
 
-	fmt.Printf("Your profile %s was deleted successfully", render.Paint(name, render.Gray, opts.NoColor))
+	fmt.Printf("Your profile %s was deleted successfully\n", render.Paint(name, render.Gray, opts.NoColor))
 
 	return nil
 }
