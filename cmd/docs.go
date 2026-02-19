@@ -10,7 +10,9 @@ var docsCmd = &cobra.Command{
 	Use:   "docs",
 	Short: "Open the Rewrite documentation in your browser",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return network.OpenURL(config.DocsURL)
+		noColor, _ := cmd.Flags().GetBool("no-color")
+
+		return network.OpenURL(config.DocsURL, noColor)
 	},
 }
 

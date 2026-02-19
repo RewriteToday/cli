@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
+
+	"github.com/RewriteToday/cli/internal/render"
 )
 
-func OpenURL(url string) error {
+func OpenURL(url string, noColor bool) error {
 	var cmd string
 	var args []string
 
@@ -21,7 +23,9 @@ func OpenURL(url string) error {
 		cmd = "xdg-open"
 		args = []string{url}
 	default:
-		return fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
+		_, err := fmt.Println(render.Hyperlink("Go to the docs (docs.rewritetoday.com)", "https://docs.rewritetoday.com", noColor))
+
+		return err
 	}
 
 	return exec.Command(cmd, args...).Start()
