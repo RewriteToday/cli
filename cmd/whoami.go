@@ -8,7 +8,7 @@ import (
 var whoamiCmd = &cobra.Command{
 	Use:   "whoami",
 	Short: "Show the current active profile",
-	RunE:  func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		format, _ := cmd.Flags().GetString("output")
 		noColor, _ := cmd.Flags().GetBool("no-color")
 
