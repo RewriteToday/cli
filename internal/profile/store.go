@@ -2,50 +2,18 @@ package profile
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/RewriteToday/cli/internal/config"
-	"github.com/zalando/go-keyring"
 )
-
-const profileKeyPrefix = "profile:"
-
-func kSet(key, val string) error {
-	return keyring.Set(config.KeyringService, key, val)
-}
-
-func kGet(key string) (string, error) {
-	val, err := keyring.Get(config.KeyringService, key)
-	if errors.Is(err, keyring.ErrNotFound) {
-		return "", fmt.Errorf("key '%s' not found", key)
-	}
-	if err != nil {
-		return "", err
-	}
-
-	return val, nil
-}
-
-func kDel(key string) error {
-	err := keyring.Delete(config.KeyringService, key)
-	if errors.Is(err, keyring.ErrNotFound) {
-		return fmt.Errorf("key '%s' not found", key)
-	}
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func Save(name, apiKey string) error {
 	if err := validateProfileName(name); err != nil {
 		return err
 	}
 
-	if err := kSet(profileKey(name), apiKey); err != nil {
+	if err := KSet(name, apiKey); err != nil {
 		return fmt.Errorf("failed to save profile: %w", err)
 	}
 
@@ -63,7 +31,8 @@ func Save(name, apiKey string) error {
 }
 
 func Get(name string) (string, error) {
-	key, err := kGet(profileKey(name))
+	key, err := KGet(name)
+	
 	if err != nil {
 		return "", fmt.Errorf("profile '%s' not found: %w", name, err)
 	}
@@ -72,7 +41,7 @@ func Get(name string) (string, error) {
 }
 
 func Delete(name string) error {
-	if err := kDel(profileKey(name)); err != nil {
+	if err := KDelete(name); err != nil {
 		return fmt.Errorf("failed to delete profile '%s': %w", name, err)
 	}
 
@@ -90,20 +59,23 @@ func Delete(name string) error {
 	}
 
 	active, _, _ := GetActive()
+	
 	if active == name {
-		_ = kDel(config.ActiveKey)
+		_ = KDelete(config.ActiveKey)
 	}
 
 	return nil
 }
 
 func List() ([]string, error) {
-	data, err := kGet(config.ProfilesKey)
+	data, err := KGet(config.ProfilesKey)
+	
 	if err != nil {
 		return []string{}, nil
 	}
 
 	var profiles []string
+	
 	if err := json.Unmarshal([]byte(data), &profiles); err != nil {
 		return []string{}, nil
 	}
@@ -113,28 +85,27 @@ func List() ([]string, error) {
 
 func Exists(name string) bool {
 	_, err := Get(name)
+	
 	return err == nil
 }
 
 func saveProfileList(profiles []string) error {
 	data, err := json.Marshal(profiles)
+	
 	if err != nil {
 		return fmt.Errorf("failed to serialize profile list: %w", err)
 	}
 
-	return kSet(config.ProfilesKey, string(data))
-}
-
-func profileKey(name string) string {
-	return profileKeyPrefix + name
+	return KSet(config.ProfilesKey, string(data))
 }
 
 func validateProfileName(name string) error {
 	if strings.HasPrefix(name, "__") {
 		return fmt.Errorf("profile name cannot start with '__'")
 	}
-	if strings.HasPrefix(name, profileKeyPrefix) {
-		return fmt.Errorf("profile name cannot start with '%s'", profileKeyPrefix)
+	
+	if strings.HasPrefix(name, PROFILE_KEY_PREFIX) {
+		return fmt.Errorf("profile name cannot start with '%s'", PROFILE_KEY_PREFIX)
 	}
 
 	return nil
