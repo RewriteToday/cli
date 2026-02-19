@@ -32,7 +32,7 @@ func Save(name, apiKey string) error {
 
 func Get(name string) (string, error) {
 	key, err := KGet(name)
-	
+
 	if err != nil {
 		return "", fmt.Errorf("profile '%s' not found: %w", name, err)
 	}
@@ -59,7 +59,7 @@ func Delete(name string) error {
 	}
 
 	active, _, _ := GetActive()
-	
+
 	if active == name {
 		_ = KDelete(config.ActiveKey)
 	}
@@ -67,15 +67,37 @@ func Delete(name string) error {
 	return nil
 }
 
+func DeleteAll() (int, error) {
+	profiles, err := List()
+
+	if err != nil {
+		return 0, err
+	}
+
+	for _, name := range profiles {
+		if err := KDelete(name); err != nil {
+			return 0, fmt.Errorf("failed to delete profile '%s': %w", name, err)
+		}
+	}
+
+	if err := saveProfileList([]string{}); err != nil {
+		return 0, err
+	}
+
+	_ = KDelete(config.ActiveKey)
+
+	return len(profiles), nil
+}
+
 func List() ([]string, error) {
 	data, err := KGet(config.ProfilesKey)
-	
+
 	if err != nil {
 		return []string{}, nil
 	}
 
 	var profiles []string
-	
+
 	if err := json.Unmarshal([]byte(data), &profiles); err != nil {
 		return []string{}, nil
 	}
@@ -85,13 +107,13 @@ func List() ([]string, error) {
 
 func Exists(name string) bool {
 	_, err := Get(name)
-	
+
 	return err == nil
 }
 
 func saveProfileList(profiles []string) error {
 	data, err := json.Marshal(profiles)
-	
+
 	if err != nil {
 		return fmt.Errorf("failed to serialize profile list: %w", err)
 	}
@@ -103,7 +125,7 @@ func validateProfileName(name string) error {
 	if strings.HasPrefix(name, "__") {
 		return fmt.Errorf("profile name cannot start with '__'")
 	}
-	
+
 	if strings.HasPrefix(name, PROFILE_KEY_PREFIX) {
 		return fmt.Errorf("profile name cannot start with '%s'", PROFILE_KEY_PREFIX)
 	}

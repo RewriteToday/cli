@@ -5,20 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var profileListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all profiles",
+var profileSweepCmd = &cobra.Command{
+	Use:   "sweep",
+	Short: "Sweep all profiles created before",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
 		noColor, _ := cmd.Flags().GetBool("no-color")
 
-		return profiles.List(profiles.ListOpts{
-			Format:  format,
+		return profiles.Sweep(profiles.SweepOpts{
 			NoColor: noColor,
 		})
 	},
 }
 
 func init() {
-	profileCmd.AddCommand(profileListCmd)
+	profileCmd.AddCommand(profileSweepCmd)
 }
