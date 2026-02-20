@@ -14,7 +14,7 @@ type RemoveOpts struct {
 }
 
 func Remove(opts RemoveOpts) error {
-	name, err := resolveName(opts.Args)
+	name, err := resolveName(opts.Args, opts.Interactive)
 
 	if err != nil {
 		return err

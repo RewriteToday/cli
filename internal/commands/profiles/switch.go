@@ -14,7 +14,7 @@ type SwitchOpts struct {
 }
 
 func Switch(opts SwitchOpts) error {
-	name, err := resolveName(opts.Args)
+	name, err := resolveName(opts.Args, opts.Interactive)
 
 	if err != nil {
 		return err

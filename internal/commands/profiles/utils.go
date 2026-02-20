@@ -1,13 +1,12 @@
 package profiles
 
 import (
-	"fmt"
-
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/profile"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
-func resolveName(args []string) (string, error) {
+func resolveName(args []string, interactive bool) (string, error) {
 	var name string
 
 	if len(args) > 0 {
@@ -15,6 +14,10 @@ func resolveName(args []string) (string, error) {
 	}
 
 	if name == "" {
+		if !interactive {
+			return "", clierr.Errorf(clierr.CodeUsage, "profile name required (or use -i for interactive mode)")
+		}
+
 		profiles, err := profile.List()
 
 		if err != nil {
@@ -22,7 +25,7 @@ func resolveName(args []string) (string, error) {
 		}
 
 		if len(profiles) == 0 {
-			return "", fmt.Errorf("we did not find any profile")
+			return "", clierr.Errorf(clierr.CodeNotFound, "we did not find any profile")
 		}
 
 		name, err := style.SelectString("Select a profile", profiles)
@@ -32,7 +35,7 @@ func resolveName(args []string) (string, error) {
 		}
 
 		if name == "" {
-			return "", fmt.Errorf("a profile name is required")
+			return "", clierr.Errorf(clierr.CodeUsage, "a profile name is required")
 		}
 	}
 
