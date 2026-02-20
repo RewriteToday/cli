@@ -2,9 +2,11 @@ package profile
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/config"
 )
 
@@ -17,7 +19,10 @@ func Save(name, apiKey string) error {
 		return fmt.Errorf("failed to save profile: %w", err)
 	}
 
-	profiles, _ := List()
+	profiles, err := List()
+	if err != nil {
+		return fmt.Errorf("failed to list profiles: %w", err)
+	}
 
 	for _, p := range profiles {
 		if p == name {
@@ -34,7 +39,11 @@ func Get(name string) (string, error) {
 	key, err := KGet(name)
 
 	if err != nil {
-		return "", fmt.Errorf("profile '%s' not found: %w", name, err)
+		if errors.Is(err, ErrKeyNotFound) {
+			return "", clierr.Errorf(clierr.CodeNotFound, "profile '%s' not found", name)
+		}
+
+		return "", fmt.Errorf("failed to load profile '%s': %w", name, err)
 	}
 
 	return key, nil
@@ -45,7 +54,10 @@ func Delete(name string) error {
 		return fmt.Errorf("failed to delete profile '%s': %w", name, err)
 	}
 
-	profiles, _ := List()
+	profiles, err := List()
+	if err != nil {
+		return fmt.Errorf("failed to list profiles: %w", err)
+	}
 	filtered := make([]string, 0, len(profiles))
 
 	for _, p := range profiles {
@@ -58,10 +70,15 @@ func Delete(name string) error {
 		return err
 	}
 
-	active, _, _ := GetActive()
+	active, _, err := GetActive()
+	if err != nil && clierr.CodeOf(err) != clierr.CodeAuthRequired {
+		return err
+	}
 
 	if active == name {
-		_ = KDelete(config.ActiveKey)
+		if err := KDelete(config.ActiveKey); err != nil && !errors.Is(err, ErrKeyNotFound) {
+			return fmt.Errorf("failed to clear active profile: %w", err)
+		}
 	}
 
 	return nil
@@ -84,7 +101,9 @@ func DeleteAll() (int, error) {
 		return 0, err
 	}
 
-	_ = KDelete(config.ActiveKey)
+	if err := KDelete(config.ActiveKey); err != nil && !errors.Is(err, ErrKeyNotFound) {
+		return 0, fmt.Errorf("failed to clear active profile: %w", err)
+	}
 
 	return len(profiles), nil
 }
@@ -93,13 +112,17 @@ func List() ([]string, error) {
 	data, err := KGet(config.ProfilesKey)
 
 	if err != nil {
-		return []string{}, nil
+		if errors.Is(err, ErrKeyNotFound) {
+			return []string{}, nil
+		}
+
+		return nil, fmt.Errorf("failed to read profiles list: %w", err)
 	}
 
 	var profiles []string
 
 	if err := json.Unmarshal([]byte(data), &profiles); err != nil {
-		return []string{}, nil
+		return nil, fmt.Errorf("failed to decode profiles list: %w", err)
 	}
 
 	return profiles, nil
