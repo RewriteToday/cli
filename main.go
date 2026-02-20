@@ -1,15 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/RewriteToday/cli/cmd"
+	"github.com/RewriteToday/cli/internal/clierr"
+	"github.com/RewriteToday/cli/internal/style"
 )
 
 func main() {
 	if err := cmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		format := cmd.ResolveOutputFormat(os.Args[1:])
+
+		style.PrintError(err, format)
+
+		os.Exit(clierr.ExitCode(err))
 	}
 }

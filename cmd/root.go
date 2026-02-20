@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/version"
 	"github.com/spf13/cobra"
 )
@@ -51,7 +51,8 @@ func normalizeOutputFormat(raw string) (string, error) {
 		return format, nil
 	}
 
-	return "", fmt.Errorf(
+	return "", clierr.Errorf(
+		clierr.CodeUsage,
 		"invalid output format %q (use one of: %s)",
 		raw,
 		strings.Join(formats, ", "),
@@ -66,4 +67,33 @@ func isSupportedOutputFormat(format string) bool {
 	}
 
 	return false
+}
+
+func ResolveOutputFormat(args []string) string {
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+
+		if strings.HasPrefix(arg, "--output=") {
+			format, err := normalizeOutputFormat(strings.TrimPrefix(arg, "--output="))
+			if err == nil {
+				return format
+			}
+			return "text"
+		}
+
+		if arg == "--output" || arg == "-o" {
+			if i+1 >= len(args) {
+				return "text"
+			}
+
+			format, err := normalizeOutputFormat(args[i+1])
+			if err == nil {
+				return format
+			}
+
+			return "text"
+		}
+	}
+
+	return "text"
 }
