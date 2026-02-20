@@ -62,9 +62,9 @@ func createProfileListJSONItems(items []style.ProfileListItem, activeName string
 
 	for i, item := range items {
 		jsonItems[i] = style.ProfileListItemJSON{
-			Name:   item.Name,
-			APIKey: item.APIKey,
-			Active: item.Name == activeName,
+			Name:         item.Name,
+			APIKeyMasked: style.MaskKey(item.APIKey),
+			Active:       item.Name == activeName,
 		}
 	}
 

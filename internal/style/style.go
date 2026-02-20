@@ -102,6 +102,11 @@ type ProfileInfo struct {
 	APIKey string `json:"api_key"`
 }
 
+type ProfileInfoJSON struct {
+	Name         string `json:"name"`
+	APIKeyMasked string `json:"api_key_masked"`
+}
+
 type ProfileListItem struct {
 	Name   string `json:"name"`
 	APIKey string `json:"api_key"`
@@ -113,9 +118,9 @@ type ProfileListText struct {
 }
 
 type ProfileListItemJSON struct {
-	Name   string `json:"name"`
-	APIKey string `json:"api_key"`
-	Active bool   `json:"active"`
+	Name         string `json:"name"`
+	APIKeyMasked string `json:"api_key_masked"`
+	Active       bool   `json:"active"`
 }
 
 type LogEntry struct {
@@ -134,7 +139,7 @@ type EventMessage struct {
 
 func Print(data any, format string, noColor bool) error {
 	if format == "json" {
-		return printJSON(data, noColor)
+		return printJSON(sanitizeForJSON(data), noColor)
 	}
 
 	return printText(data, noColor)
@@ -253,6 +258,26 @@ func maskKey(key string) string {
 		return key + "..."
 	}
 	return key[:12] + "..."
+}
+
+func MaskKey(key string) string {
+	return maskKey(key)
+}
+
+func sanitizeForJSON(data any) any {
+	switch v := data.(type) {
+	case ProfileInfo:
+		return ProfileInfoJSON{
+			Name:         v.Name,
+			APIKeyMasked: maskKey(v.APIKey),
+		}
+	case []ProfileListItemJSON:
+		items := make([]ProfileListItemJSON, len(v))
+		copy(items, v)
+		return items
+	default:
+		return data
+	}
 }
 
 func formatPayload(payload any) string {
