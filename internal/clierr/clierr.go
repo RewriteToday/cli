@@ -122,9 +122,5 @@ func isNetworkError(err error) bool {
 	}
 
 	var urlErr *url.Error
-	if errors.As(err, &urlErr) {
-		return true
-	}
-
-	return false
+	return errors.As(err, &urlErr)
 }

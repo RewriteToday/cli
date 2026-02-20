@@ -240,7 +240,9 @@ func printText(data any, noColor bool) error {
 			return nil
 		}
 		for _, entry := range v {
-			printText(entry, noColor)
+			if err := printText(entry, noColor); err != nil {
+				return err
+			}
 		}
 
 	case string:
