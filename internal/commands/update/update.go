@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/render"
 	"github.com/RewriteToday/cli/internal/version"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
@@ -14,7 +15,7 @@ func Update(noColor bool) error {
 	latest, found, err := checkUpdate(context.TODO(), version.Version)
 
 	if err != nil {
-		return fmt.Errorf("couldn’t check for updates: %w", err)
+		return clierr.Wrap(clierr.CodeNetwork, fmt.Errorf("couldn’t check for updates: %w", err))
 	}
 
 	if !found {
@@ -39,7 +40,7 @@ func Update(noColor bool) error {
 	stop()
 
 	if err != nil {
-		return err
+		return clierr.Wrap(clierr.CodeNetwork, err)
 	}
 
 	fmt.Printf("You're now in the version %s ✨. %s\n", latest.Version, render.Hyperlink("Go to the changelog", "https://docs.rewritetoday.com", noColor))

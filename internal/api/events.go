@@ -1,8 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"strings"
+
+	"github.com/RewriteToday/cli/internal/clierr"
 )
 
 type EventType string
@@ -39,7 +40,7 @@ func ValidateEventType(s string) (EventType, error) {
 		supported[i] = string(e)
 	}
 
-	return "", fmt.Errorf("unsupported event type '%s', supported: %s", s, strings.Join(supported, ", "))
+	return "", clierr.Errorf(clierr.CodeUsage, "unsupported event type '%s', supported: %s", s, strings.Join(supported, ", "))
 }
 
 func MockData(eventType EventType) map[string]any {

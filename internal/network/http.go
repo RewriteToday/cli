@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/RewriteToday/cli/internal/clierr"
 )
 
 const localhostAddr = "localhost:8080"
@@ -14,7 +16,7 @@ func Serve(route string, handler http.Handler) error {
 		return err
 	}
 
-	return server.ListenAndServe()
+	return clierr.Wrap(clierr.CodeNetwork, server.ListenAndServe())
 }
 
 func newServer(route string, handler http.Handler) (*http.Server, error) {

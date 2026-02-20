@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/RewriteToday/cli/internal/api"
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/style"
 	"github.com/spf13/cobra"
 )
@@ -62,7 +63,7 @@ func resolveTriggerEventType(args []string, interactive bool) (string, error) {
 	}
 
 	if eventTypeStr == "" {
-		return "", fmt.Errorf("event type required (or use -i for interactive mode)")
+		return "", clierr.Errorf(clierr.CodeUsage, "event type required (or use -i for interactive mode)")
 	}
 
 	return eventTypeStr, nil

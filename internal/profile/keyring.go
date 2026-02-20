@@ -9,6 +9,8 @@ import (
 
 const KEYRING_SERVICE, PROFILE_KEY_PREFIX = "rewrite-cli", "profile:"
 
+var ErrKeyNotFound = errors.New("key not found")
+
 func KSet(key, value string) error {
 	return keyring.Set(KEYRING_SERVICE, prefix(key), value)
 }
@@ -17,7 +19,7 @@ func KGet(key string) (string, error) {
 	value, err := keyring.Get(KEYRING_SERVICE, prefix(key))
 	if err != nil {
 		if errors.Is(err, keyring.ErrNotFound) {
-			return "", fmt.Errorf("key '%s' not found", key)
+			return "", fmt.Errorf("%w: key '%s'", ErrKeyNotFound, key)
 		}
 
 		return "", err
@@ -29,7 +31,7 @@ func KGet(key string) (string, error) {
 func KDelete(key string) error {
 	if err := keyring.Delete(KEYRING_SERVICE, prefix(key)); err != nil {
 		if errors.Is(err, keyring.ErrNotFound) {
-			return fmt.Errorf("key '%s' not found", key)
+			return fmt.Errorf("%w: key '%s'", ErrKeyNotFound, key)
 		}
 
 		return err
