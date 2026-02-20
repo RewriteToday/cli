@@ -14,6 +14,13 @@ var rootCmd = &cobra.Command{
 	SilenceErrors: true,
 	Version:       version.Version,
 	Short:         "A developer-first CLI to integrate Rewrite in your workflow",
+	Long: `Rewrite CLI helps you authenticate, manage profiles, trigger test events,
+and inspect webhook logs during local development.`,
+	Example: `  rewrite login my-profile
+  rewrite whoami --output json
+  rewrite trigger sms.created -i
+  rewrite logs list --limit 50
+  rewrite completion zsh > ~/.zsh/completions/_rewrite`,
 	PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 		return validateAndNormalizeOutputFormat(cmd)
 	},

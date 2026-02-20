@@ -13,7 +13,10 @@ var triggerCmd = &cobra.Command{
 	Use:   "trigger <event-type>",
 	Short: "Trigger a test event",
 	Args:  cobra.MaximumNArgs(1),
-	RunE:  runTriggerCommand,
+	Example: `  rewrite trigger sms.created
+  rewrite trigger sms.sent -i
+  rewrite trigger sms.delivered --output json`,
+	RunE: runTriggerCommand,
 }
 
 func runTriggerCommand(cmd *cobra.Command, args []string) error {

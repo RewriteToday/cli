@@ -6,10 +6,12 @@ import (
 )
 
 var profileDelCmd = &cobra.Command{
-	Use:     "remove <name>",
+	Use:     "remove [name]",
 	Aliases: []string{"rm", "del", "delete"},
 	Short:   "Remove a logged-in profile",
 	Args:    cobra.MaximumNArgs(1),
+	Example: `  rewrite profile remove my-profile
+  rewrite profile remove -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		noColor, _ := cmd.Flags().GetBool("no-color")
 		interactive, _ := cmd.Flags().GetBool("interactive")

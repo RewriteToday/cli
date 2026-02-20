@@ -13,7 +13,10 @@ var loginCmd = &cobra.Command{
 	Use:   "login [profile-name]",
 	Short: "Authenticate with Rewrite and save a profile",
 	Args:  cobra.MaximumNArgs(1),
-	RunE:  runLoginCommand,
+	Example: `  rewrite login
+  rewrite login team-staging
+  rewrite login -i`,
+	RunE: runLoginCommand,
 }
 
 func runLoginCommand(cmd *cobra.Command, args []string) error {
