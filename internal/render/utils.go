@@ -15,7 +15,7 @@ func Hyperlink(text, url string, noColor bool) string {
 }
 
 func supportsHyperlinks() bool {
-	return IS_COLOR_ENABLED &&
+	return IsColorEnabled() &&
 		os.Getenv("TERM") != "dumb" &&
 		term.IsTerminal(int(os.Stdout.Fd()))
 }

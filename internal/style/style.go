@@ -175,7 +175,7 @@ func printJSONToWriter(w *os.File, data any, noColor bool) error {
 		payload += "\n"
 	}
 
-	if noColor || !render.IS_COLOR_ENABLED {
+	if noColor || !render.IsColorEnabled() {
 		_, err = fmt.Fprint(w, payload)
 		return err
 	}

@@ -2,7 +2,9 @@ package render
 
 import "os"
 
-var IS_COLOR_ENABLED = os.Getenv("NO_COLOR") == "" || os.Getenv("CI") != ""
+func IsColorEnabled() bool {
+	return os.Getenv("NO_COLOR") == ""
+}
 
 const (
 	Reset = "\033[0m"
@@ -16,7 +18,7 @@ const (
 )
 
 func Paint(content, code string, noColor bool) string {
-	if noColor || !IS_COLOR_ENABLED {
+	if noColor || !IsColorEnabled() {
 		return content
 	}
 
