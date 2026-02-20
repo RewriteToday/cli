@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/render"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/quick"
@@ -140,8 +141,14 @@ func Print(data any, format string, noColor bool) error {
 }
 
 func PrintError(err error, format string) {
+	code := clierr.CodeOf(err)
+
 	if format == "json" {
-		errData := map[string]string{"error": err.Error()}
+		errData := map[string]any{
+			"error":     err.Error(),
+			"code":      code.String(),
+			"exit_code": int(code),
+		}
 		jsonErr := printJSONToWriter(os.Stderr, errData, false)
 		if jsonErr == nil {
 			return
