@@ -50,6 +50,13 @@ changelog:
       - "^chore:"
 
 release:
+  footer: |
+    ## Install
+
+    ```sh
+    curl -fsSL https://raw.githubusercontent.com/RewriteToday/cli/main/scripts/install.sh | sh
+    ```
+
   github:
     owner: RewriteToday
     name: cli
