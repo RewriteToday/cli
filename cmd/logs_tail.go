@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/RewriteToday/cli/internal/network"
@@ -15,19 +18,28 @@ import (
 var logsTailCmd = &cobra.Command{
 	Use:   "tail",
 	Short: "Receive logs via webhook in real-time",
-	RunE:  runLogsTailCommand,
+	Example: `  rewrite logs tail
+  rewrite logs tail --port 9090
+  rewrite logs tail --output json`,
+	RunE: runLogsTailCommand,
 }
 
 func runLogsTailCommand(cmd *cobra.Command, _ []string) error {
 	format, _ := cmd.Flags().GetString("output")
 	noColor, _ := cmd.Flags().GetBool("no-color")
-	return tailLogs(format, noColor)
+	port, _ := cmd.Flags().GetInt("port")
+	return tailLogs(format, noColor, port)
 }
 
-func tailLogs(format string, noColor bool) error {
+func tailLogs(format string, noColor bool, port int) error {
 	const route = "/logs/tail"
-	fmt.Printf("Waiting for webhook logs at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
-	return network.Serve(route, buildLogsTailHandler(format, noColor))
+	addr := fmt.Sprintf("localhost:%d", port)
+	fmt.Printf("Waiting for webhook logs at http://%s%s (press Ctrl+C to stop)\n", addr, route)
+
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	return network.Serve(ctx, addr, route, buildLogsTailHandler(format, noColor))
 }
 
 func buildLogsTailHandler(format string, noColor bool) http.Handler {
@@ -71,5 +83,6 @@ func buildLogsTailHandler(format string, noColor bool) http.Handler {
 }
 
 func init() {
+	logsTailCmd.Flags().Int("port", 8080, "Port to bind for local webhook log listener")
 	logsCmd.AddCommand(logsTailCmd)
 }

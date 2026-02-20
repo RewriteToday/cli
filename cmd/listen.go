@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/RewriteToday/cli/internal/network"
@@ -15,20 +18,28 @@ import (
 var listenCmd = &cobra.Command{
 	Use:   "listen",
 	Short: "Listen for real-time events",
-	RunE:  runListenCommand,
+	Example: `  rewrite listen
+  rewrite listen --port 9090
+  rewrite listen --output json`,
+	RunE: runListenCommand,
 }
 
 func runListenCommand(cmd *cobra.Command, _ []string) error {
 	format, _ := cmd.Flags().GetString("output")
 	noColor, _ := cmd.Flags().GetBool("no-color")
-	return listen(format, noColor)
+	port, _ := cmd.Flags().GetInt("port")
+	return listen(format, noColor, port)
 }
 
-func listen(format string, noColor bool) error {
+func listen(format string, noColor bool, port int) error {
 	const route = "/events/listen"
-	fmt.Printf("Waiting for webhook events at http://localhost:8080%s (press Ctrl+C to stop)\n", route)
+	addr := fmt.Sprintf("localhost:%d", port)
+	fmt.Printf("Waiting for webhook events at http://%s%s (press Ctrl+C to stop)\n", addr, route)
 
-	return network.Serve(route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	return network.Serve(ctx, addr, route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -72,5 +83,6 @@ func listen(format string, noColor bool) error {
 }
 
 func init() {
+	listenCmd.Flags().Int("port", 8080, "Port to bind for local webhook listener")
 	rootCmd.AddCommand(listenCmd)
 }
