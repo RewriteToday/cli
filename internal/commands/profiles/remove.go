@@ -14,13 +14,15 @@ type RemoveOpts struct {
 }
 
 func Remove(opts RemoveOpts) error {
-	name, err := resolveName(opts.Args, opts.Interactive)
+	interactive := shouldUseInteractive(opts.Args, opts.Interactive)
+
+	name, err := resolveName(opts.Args, interactive)
 
 	if err != nil {
 		return err
 	}
 
-	if opts.Interactive {
+	if interactive {
 		confirmed, err := confirmRemoval(name)
 
 		if err != nil {

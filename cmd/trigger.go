@@ -10,10 +10,11 @@ import (
 )
 
 var triggerCmd = &cobra.Command{
-	Use:   "trigger <event-type>",
+	Use:   "trigger [event-type]",
 	Short: "Trigger a test event",
 	Args:  cobra.MaximumNArgs(1),
-	Example: `  rewrite trigger sms.created
+	Example: `  rewrite trigger
+  rewrite trigger sms.created
   rewrite trigger sms.sent -i
   rewrite trigger sms.delivered --output json`,
 	RunE: runTriggerCommand,
@@ -23,6 +24,7 @@ func runTriggerCommand(cmd *cobra.Command, args []string) error {
 	interactive, _ := cmd.Flags().GetBool("interactive")
 	format, _ := cmd.Flags().GetString("output")
 	noColor, _ := cmd.Flags().GetBool("no-color")
+	interactive = shouldUseInteractive(args, interactive)
 
 	eventTypeStr, err := resolveTriggerEventType(args, interactive)
 	if err != nil {
@@ -70,6 +72,14 @@ func resolveTriggerEventType(args []string, interactive bool) (string, error) {
 	}
 
 	return eventTypeStr, nil
+}
+
+func shouldUseInteractive(args []string, interactive bool) bool {
+	if interactive {
+		return true
+	}
+
+	return len(args) == 0
 }
 
 func buildTriggerPayload(eventType api.EventType, eventTypeStr string, interactive bool) (map[string]interface{}, error) {
