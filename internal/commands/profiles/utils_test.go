@@ -3,6 +3,7 @@ package profiles
 import (
 	"testing"
 
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/clierr"
 )
 
@@ -35,7 +36,7 @@ func TestShouldUseInteractive(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := shouldUseInteractive(tt.args, tt.interactive); got != tt.want {
+			if got := cliutil.ShouldUseInteractive(tt.args, tt.interactive); got != tt.want {
 				t.Fatalf("expected %t, got %t", tt.want, got)
 			}
 		})

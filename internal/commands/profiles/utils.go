@@ -6,14 +6,6 @@ import (
 	"github.com/RewriteToday/cli/internal/style"
 )
 
-func shouldUseInteractive(args []string, interactive bool) bool {
-	if interactive {
-		return true
-	}
-
-	return len(args) == 0
-}
-
 func resolveName(args []string, interactive bool) (string, error) {
 	var name string
 

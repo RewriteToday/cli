@@ -16,13 +16,9 @@ var loginCmd = &cobra.Command{
   rewrite login team-staging
   rewrite login -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		options := cliutil.ReadInteractiveRenderOptions(cmd)
-
 		return commands.Login(commands.LoginOpts{
-			Args:        args,
-			Interactive: options.Interactive,
-			Format:      options.Format,
-			NoColor:     options.NoColor,
+			Args:                     args,
+			InteractiveRenderOptions: cliutil.ReadInteractiveRenderOptions(cmd),
 		})
 	},
 }

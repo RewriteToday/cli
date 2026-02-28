@@ -18,6 +18,14 @@ type InteractiveRenderOptions struct {
 	NoColor     bool
 }
 
+func ShouldUseInteractive(args []string, interactive bool) bool {
+	if interactive {
+		return true
+	}
+
+	return len(args) == 0
+}
+
 func ReadRenderOptions(cmd *cobra.Command) RenderOptions {
 	return RenderOptions{
 		Format:  ReadStringFlag(cmd, "output"),

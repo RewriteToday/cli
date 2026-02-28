@@ -4,18 +4,18 @@ import (
 	"fmt"
 
 	"github.com/RewriteToday/cli/internal/api"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/clierr"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
 type TriggerOpts struct {
-	Args                 []string
-	Interactive, NoColor bool
-	Format               string
+	cliutil.InteractiveRenderOptions
+	Args []string
 }
 
 func Trigger(opts TriggerOpts) error {
-	interactive := shouldUseTriggerInteractive(opts.Args, opts.Interactive)
+	interactive := cliutil.ShouldUseInteractive(opts.Args, opts.Interactive)
 
 	eventTypeStr, err := resolveTriggerEventType(opts.Args, interactive)
 	if err != nil {
@@ -64,14 +64,6 @@ func resolveTriggerEventType(args []string, interactive bool) (string, error) {
 	}
 
 	return eventTypeStr, nil
-}
-
-func shouldUseTriggerInteractive(args []string, interactive bool) bool {
-	if interactive {
-		return true
-	}
-
-	return len(args) == 0
 }
 
 func buildTriggerPayload(eventType api.EventType, interactive bool) (map[string]any, error) {

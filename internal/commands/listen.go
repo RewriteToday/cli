@@ -10,14 +10,14 @@ import (
 	"syscall"
 	"time"
 
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/network"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
 type ListenOpts struct {
-	NoColor bool
-	Format  string
-	Port    int
+	cliutil.RenderOptions
+	Port int
 }
 
 func Listen(opts ListenOpts) error {

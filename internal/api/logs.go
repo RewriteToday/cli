@@ -18,24 +18,35 @@ func (c *Client) ListLogs(limit int, cursor string) ([]LogEntry, string, error) 
 		limit = 0
 	}
 
-	eventTypes := []EventType{SMSCreated, SMSSent, SMSDelivered}
 	base := time.Now().UTC()
-	logs := make([]LogEntry, 0, limit)
+	logs := make([]LogEntry, limit)
 
-	for i := range limit {
-		eventType := eventTypes[i%len(eventTypes)]
+	for i := 0; i < limit; i++ {
+		eventType := SupportedEvents[i%len(SupportedEvents)]
 		payload := MockData(eventType)
-		status, _ := payload["status"].(string)
 
-		logs = append(logs, LogEntry{
+		logs[i] = LogEntry{
 			ID:        fmt.Sprintf("log_%06d", i+1),
 			Timestamp: base.Add(-time.Duration(i*3) * time.Minute).Format(time.RFC3339),
 			EventType: string(eventType),
-			Status:    status,
+			Status:    eventStatus(eventType),
 			Payload:   payload,
-		})
+		}
 	}
 
 	_ = cursor
 	return logs, "", nil
+}
+
+func eventStatus(eventType EventType) string {
+	switch eventType {
+	case SMSCreated:
+		return "created"
+	case SMSSent:
+		return "sent"
+	case SMSDelivered:
+		return "delivered"
+	default:
+		return ""
+	}
 }

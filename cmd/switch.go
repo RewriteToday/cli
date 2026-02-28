@@ -15,13 +15,9 @@ var switchCmd = &cobra.Command{
 	Example: `  rewrite switch my-profile
   rewrite switch -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		options := cliutil.ReadInteractiveRenderOptions(cmd)
-
 		return profiles.Switch(profiles.SwitchOpts{
-			Args:        args,
-			Format:      options.Format,
-			NoColor:     options.NoColor,
-			Interactive: options.Interactive,
+			Args:                     args,
+			InteractiveRenderOptions: cliutil.ReadInteractiveRenderOptions(cmd),
 		})
 	},
 }

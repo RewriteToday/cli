@@ -17,13 +17,9 @@ var triggerCmd = &cobra.Command{
   rewrite trigger sms.sent -i
   rewrite trigger sms.delivered --output json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		options := cliutil.ReadInteractiveRenderOptions(cmd)
-
 		return commands.Trigger(commands.TriggerOpts{
-			Args:        args,
-			Interactive: options.Interactive,
-			Format:      options.Format,
-			NoColor:     options.NoColor,
+			Args:                     args,
+			InteractiveRenderOptions: cliutil.ReadInteractiveRenderOptions(cmd),
 		})
 	},
 }

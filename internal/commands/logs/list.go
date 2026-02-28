@@ -2,13 +2,13 @@ package logs
 
 import (
 	"github.com/RewriteToday/cli/internal/api"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
 type ListOpts struct {
-	NoColor bool
-	Format  string
-	Limit   int
+	cliutil.RenderOptions
+	Limit int
 }
 
 func List(opts ListOpts) error {

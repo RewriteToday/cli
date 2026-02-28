@@ -14,12 +14,7 @@ var whoamiCmd = &cobra.Command{
 	Example: `  rewrite whoami
   rewrite whoami --output json`,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		render := cliutil.ReadRenderOptions(cmd)
-
-		return commands.Whoami(commands.WhoamiOpts{
-			Format:  render.Format,
-			NoColor: render.NoColor,
-		})
+		return commands.Whoami(cliutil.ReadRenderOptions(cmd))
 	},
 }
 

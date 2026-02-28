@@ -15,12 +15,9 @@ var profileDelCmd = &cobra.Command{
 	Example: `  rewrite profile remove my-profile
   rewrite profile remove -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		options := cliutil.ReadInteractiveOptions(cmd)
-
 		return profiles.Remove(profiles.RemoveOpts{
-			Args:        args,
-			NoColor:     options.NoColor,
-			Interactive: options.Interactive,
+			Args:               args,
+			InteractiveOptions: cliutil.ReadInteractiveOptions(cmd),
 		})
 	},
 }

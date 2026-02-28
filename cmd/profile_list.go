@@ -13,12 +13,7 @@ var profileListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Example: `  rewrite profile list`,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		render := cliutil.ReadRenderOptions(cmd)
-
-		return profiles.List(profiles.ListOpts{
-			Format:  render.Format,
-			NoColor: render.NoColor,
-		})
+		return profiles.List(cliutil.ReadRenderOptions(cmd))
 	},
 }
 

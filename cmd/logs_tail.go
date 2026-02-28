@@ -15,12 +15,9 @@ var logsTailCmd = &cobra.Command{
   rewrite logs tail --port 9090
   rewrite logs tail --output json`,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		render := cliutil.ReadRenderOptions(cmd)
-
 		return commandlogs.Tail(commandlogs.TailOpts{
-			Format:  render.Format,
-			NoColor: render.NoColor,
-			Port:    cliutil.ReadIntFlag(cmd, "port"),
+			RenderOptions: cliutil.ReadRenderOptions(cmd),
+			Port:          cliutil.ReadIntFlag(cmd, "port"),
 		})
 	},
 }

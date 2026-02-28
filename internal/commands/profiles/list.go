@@ -1,16 +1,12 @@
 package profiles
 
 import (
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/profile"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
-type ListOpts struct {
-	NoColor bool
-	Format  string
-}
-
-func List(opts ListOpts) error {
+func List(opts cliutil.RenderOptions) error {
 	profiles, err := profile.List()
 
 	if err != nil {

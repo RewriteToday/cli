@@ -3,18 +3,19 @@ package profiles
 import (
 	"fmt"
 
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/profile"
 	"github.com/RewriteToday/cli/internal/render"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
 type RemoveOpts struct {
-	Args                 []string
-	Interactive, NoColor bool
+	cliutil.InteractiveOptions
+	Args []string
 }
 
 func Remove(opts RemoveOpts) error {
-	interactive := shouldUseInteractive(opts.Args, opts.Interactive)
+	interactive := cliutil.ShouldUseInteractive(opts.Args, opts.Interactive)
 
 	name, err := resolveName(opts.Args, interactive)
 

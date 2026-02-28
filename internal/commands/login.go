@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/RewriteToday/cli/internal/auth"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/profile"
 	"github.com/RewriteToday/cli/internal/style"
 )
 
 type LoginOpts struct {
-	Args                 []string
-	Interactive, NoColor bool
-	Format               string
+	cliutil.InteractiveRenderOptions
+	Args []string
 }
 
 func Login(opts LoginOpts) error {

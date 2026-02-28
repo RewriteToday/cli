@@ -1,6 +1,10 @@
 package commands
 
-import "testing"
+import (
+	"testing"
+
+	cliutil "github.com/RewriteToday/cli/internal/cli"
+)
 
 func TestShouldUseTriggerInteractive(t *testing.T) {
 	tests := []struct {
@@ -31,7 +35,7 @@ func TestShouldUseTriggerInteractive(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := shouldUseTriggerInteractive(tt.args, tt.interactive); got != tt.want {
+			if got := cliutil.ShouldUseInteractive(tt.args, tt.interactive); got != tt.want {
 				t.Fatalf("expected %t, got %t", tt.want, got)
 			}
 		})

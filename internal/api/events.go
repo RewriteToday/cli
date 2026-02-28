@@ -1,10 +1,6 @@
 package api
 
-import (
-	"strings"
-
-	"github.com/RewriteToday/cli/internal/clierr"
-)
+import "github.com/RewriteToday/cli/internal/clierr"
 
 type EventType string
 
@@ -20,6 +16,8 @@ var SupportedEvents = []EventType{
 	SMSDelivered,
 }
 
+const supportedEventList = "sms.created, sms.sent, sms.delivered"
+
 func SupportedEventStrings() []string {
 	result := make([]string, len(SupportedEvents))
 	for i, e := range SupportedEvents {
@@ -29,18 +27,12 @@ func SupportedEventStrings() []string {
 }
 
 func ValidateEventType(s string) (EventType, error) {
-	for _, e := range SupportedEvents {
-		if string(e) == s {
-			return e, nil
-		}
+	switch EventType(s) {
+	case SMSCreated, SMSSent, SMSDelivered:
+		return EventType(s), nil
 	}
 
-	supported := make([]string, len(SupportedEvents))
-	for i, e := range SupportedEvents {
-		supported[i] = string(e)
-	}
-
-	return "", clierr.Errorf(clierr.CodeUsage, "unsupported event type '%s', supported: %s", s, strings.Join(supported, ", "))
+	return "", clierr.Errorf(clierr.CodeUsage, "unsupported event type '%s', supported: %s", s, supportedEventList)
 }
 
 func MockData(eventType EventType) map[string]any {

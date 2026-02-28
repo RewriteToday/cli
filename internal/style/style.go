@@ -3,8 +3,8 @@ package style
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/RewriteToday/cli/internal/clierr"
@@ -169,25 +169,23 @@ func printJSON(data any, noColor bool) error {
 	return printJSONToWriter(os.Stdout, data, noColor)
 }
 
-func printJSONToWriter(w *os.File, data any, noColor bool) error {
+func printJSONToWriter(w io.Writer, data any, noColor bool) error {
 	formatted, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	payload := string(formatted)
-	if !strings.HasSuffix(payload, "\n") {
-		payload += "\n"
-	}
+	formatted = append(formatted, '\n')
 
 	if noColor || !render.IsColorEnabled() {
-		_, err = fmt.Fprint(w, payload)
+		_, err = w.Write(formatted)
 		return err
 	}
 
+	payload := string(formatted)
 	ensureVesperStyleRegistered()
 	if err := quick.Highlight(w, payload, "json", "terminal256", vesperStyleName); err != nil {
-		_, writeErr := fmt.Fprint(w, payload)
+		_, writeErr := w.Write(formatted)
 		if writeErr != nil {
 			return writeErr
 		}
@@ -228,11 +226,7 @@ func printText(data any, noColor bool) error {
 			formatPayload(v.Payload))
 
 	case LogEntry:
-		fmt.Printf("%s %s %s %s\n",
-			render.Paint(v.Timestamp, render.Gray, noColor),
-			render.Paint(v.EventType, render.Purple, noColor),
-			render.Paint(v.Status, render.Blue, noColor),
-			v.ID)
+		printLogEntry(v, noColor)
 
 	case []LogEntry:
 		if len(v) == 0 {
@@ -240,9 +234,7 @@ func printText(data any, noColor bool) error {
 			return nil
 		}
 		for _, entry := range v {
-			if err := printText(entry, noColor); err != nil {
-				return err
-			}
+			printLogEntry(entry, noColor)
 		}
 
 	case string:
@@ -266,6 +258,14 @@ func MaskKey(key string) string {
 	return maskKey(key)
 }
 
+func printLogEntry(entry LogEntry, noColor bool) {
+	fmt.Printf("%s %s %s %s\n",
+		render.Paint(entry.Timestamp, render.Gray, noColor),
+		render.Paint(entry.EventType, render.Purple, noColor),
+		render.Paint(entry.Status, render.Blue, noColor),
+		entry.ID)
+}
+
 func sanitizeForJSON(data any) any {
 	switch v := data.(type) {
 	case ProfileInfo:
@@ -274,9 +274,7 @@ func sanitizeForJSON(data any) any {
 			APIKeyMasked: maskKey(v.APIKey),
 		}
 	case []ProfileListItemJSON:
-		items := make([]ProfileListItemJSON, len(v))
-		copy(items, v)
-		return items
+		return v
 	default:
 		return data
 	}
@@ -285,7 +283,7 @@ func sanitizeForJSON(data any) any {
 func formatPayload(payload any) string {
 	data, err := json.Marshal(payload)
 	if err != nil {
-		return fmt.Sprintf("%v", payload)
+		return fmt.Sprint(payload)
 	}
 	return string(data)
 }

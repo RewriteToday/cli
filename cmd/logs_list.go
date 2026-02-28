@@ -14,12 +14,9 @@ var logsListCmd = &cobra.Command{
 	Example: `  rewrite logs list
   rewrite logs list --limit 50`,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		render := cliutil.ReadRenderOptions(cmd)
-
 		return commandlogs.List(commandlogs.ListOpts{
-			Format:  render.Format,
-			NoColor: render.NoColor,
-			Limit:   cliutil.ReadIntFlag(cmd, "limit"),
+			RenderOptions: cliutil.ReadRenderOptions(cmd),
+			Limit:         cliutil.ReadIntFlag(cmd, "limit"),
 		})
 	},
 }

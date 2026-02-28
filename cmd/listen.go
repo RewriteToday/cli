@@ -15,12 +15,9 @@ var listenCmd = &cobra.Command{
   rewrite listen --port 9090
   rewrite listen --output json`,
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		render := cliutil.ReadRenderOptions(cmd)
-
 		return commands.Listen(commands.ListenOpts{
-			Format:  render.Format,
-			NoColor: render.NoColor,
-			Port:    cliutil.ReadIntFlag(cmd, "port"),
+			RenderOptions: cliutil.ReadRenderOptions(cmd),
+			Port:          cliutil.ReadIntFlag(cmd, "port"),
 		})
 	},
 }
