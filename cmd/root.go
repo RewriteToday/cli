@@ -31,5 +31,7 @@ func init() {
 }
 
 func Execute() error {
+	configureHelp()
+
 	return rootCmd.Execute()
 }
