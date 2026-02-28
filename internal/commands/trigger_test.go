@@ -1,8 +1,8 @@
-package cmd
+package commands
 
 import "testing"
 
-func TestShouldUseInteractive(t *testing.T) {
+func TestShouldUseTriggerInteractive(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
@@ -31,7 +31,7 @@ func TestShouldUseInteractive(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := shouldUseInteractive(tt.args, tt.interactive); got != tt.want {
+			if got := shouldUseTriggerInteractive(tt.args, tt.interactive); got != tt.want {
 				t.Fatalf("expected %t, got %t", tt.want, got)
 			}
 		})

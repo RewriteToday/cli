@@ -3,6 +3,7 @@ package cmd
 import (
 	"testing"
 
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/clierr"
 )
 
@@ -21,7 +22,7 @@ func TestResolveOutputFormat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ResolveOutputFormat(tt.args); got != tt.want {
+			if got := cliutil.ResolveOutputFormat(tt.args); got != tt.want {
 				t.Fatalf("expected %q, got %q", tt.want, got)
 			}
 		})
@@ -29,7 +30,7 @@ func TestResolveOutputFormat(t *testing.T) {
 }
 
 func TestNormalizeOutputFormat_InvalidReturnsUsageError(t *testing.T) {
-	_, err := normalizeOutputFormat("xml")
+	_, err := cliutil.NormalizeOutputFormat("xml")
 	if err == nil {
 		t.Fatal("expected an error")
 	}

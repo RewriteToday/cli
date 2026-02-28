@@ -64,7 +64,7 @@ func Confirm(title string) (bool, error) {
 	return value, nil
 }
 
-func TriggerEventForm(eventType string) (map[string]any, error) {
+func TriggerEventForm() (map[string]any, error) {
 	var to, from, body string
 
 	form := huh.NewForm(

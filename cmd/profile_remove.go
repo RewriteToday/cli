@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/commands/profiles"
 	"github.com/spf13/cobra"
 )
@@ -14,13 +15,12 @@ var profileDelCmd = &cobra.Command{
 	Example: `  rewrite profile remove my-profile
   rewrite profile remove -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		noColor, _ := cmd.Flags().GetBool("no-color")
-		interactive, _ := cmd.Flags().GetBool("interactive")
+		options := cliutil.ReadInteractiveOptions(cmd)
 
 		return profiles.Remove(profiles.RemoveOpts{
 			Args:        args,
-			NoColor:     noColor,
-			Interactive: interactive,
+			NoColor:     options.NoColor,
+			Interactive: options.Interactive,
 		})
 	},
 }

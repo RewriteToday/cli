@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/commands"
 	"github.com/spf13/cobra"
 )
@@ -12,13 +13,12 @@ var whoamiCmd = &cobra.Command{
 	Aliases: []string{"current"},
 	Example: `  rewrite whoami
   rewrite whoami --output json`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
-		noColor, _ := cmd.Flags().GetBool("no-color")
+	RunE: func(cmd *cobra.Command, _ []string) error {
+		render := cliutil.ReadRenderOptions(cmd)
 
 		return commands.Whoami(commands.WhoamiOpts{
-			Format:  format,
-			NoColor: noColor,
+			Format:  render.Format,
+			NoColor: render.NoColor,
 		})
 	},
 }

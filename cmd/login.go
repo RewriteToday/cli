@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/RewriteToday/cli/internal/auth"
-	"github.com/RewriteToday/cli/internal/profile"
-	"github.com/RewriteToday/cli/internal/style"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
+	"github.com/RewriteToday/cli/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -18,48 +15,16 @@ var loginCmd = &cobra.Command{
 	Example: `  rewrite login
   rewrite login team-staging
   rewrite login -i`,
-	RunE: runLoginCommand,
-}
+	RunE: func(cmd *cobra.Command, args []string) error {
+		options := cliutil.ReadInteractiveRenderOptions(cmd)
 
-func runLoginCommand(cmd *cobra.Command, args []string) error {
-	interactive, _ := cmd.Flags().GetBool("interactive")
-	format, _ := cmd.Flags().GetString("output")
-	noColor, _ := cmd.Flags().GetBool("no-color")
-
-	name, err := resolveLoginProfileName(args, interactive)
-	if err != nil {
-		return err
-	}
-
-	apiKey, err := auth.RunOAuthFlow()
-	if err != nil {
-		return fmt.Errorf("authentication failed: %w", err)
-	}
-
-	if err := profile.Save(name, apiKey); err != nil {
-		return fmt.Errorf("failed to save profile: %w", err)
-	}
-
-	if err := profile.SetActive(name); err != nil {
-		return fmt.Errorf("failed to set active profile: %w", err)
-	}
-
-	return style.Print(style.ProfileInfo{
-		Name:   name,
-		APIKey: apiKey,
-	}, format, noColor)
-}
-
-func resolveLoginProfileName(args []string, interactive bool) (string, error) {
-	if len(args) > 0 {
-		return args[0], nil
-	}
-
-	if interactive {
-		return style.InputString("Profile name", "my-profile")
-	}
-
-	return profile.GenerateRandomName(), nil
+		return commands.Login(commands.LoginOpts{
+			Args:        args,
+			Interactive: options.Interactive,
+			Format:      options.Format,
+			NoColor:     options.NoColor,
+		})
+	},
 }
 
 func init() {

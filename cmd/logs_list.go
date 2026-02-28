@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/RewriteToday/cli/internal/api"
-	"github.com/RewriteToday/cli/internal/style"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
+	commandlogs "github.com/RewriteToday/cli/internal/commands/logs"
 	"github.com/spf13/cobra"
 )
 
@@ -13,41 +13,15 @@ var logsListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Example: `  rewrite logs list
   rewrite logs list --limit 50`,
-	RunE: runLogsListCommand,
-}
+	RunE: func(cmd *cobra.Command, _ []string) error {
+		render := cliutil.ReadRenderOptions(cmd)
 
-func runLogsListCommand(cmd *cobra.Command, _ []string) error {
-	format, _ := cmd.Flags().GetString("output")
-	noColor, _ := cmd.Flags().GetBool("no-color")
-	limit, _ := cmd.Flags().GetInt("limit")
-
-	client, err := api.New()
-	if err != nil {
-		return err
-	}
-
-	logs, _, err := client.ListLogs(limit, "")
-	if err != nil {
-		return err
-	}
-
-	items := buildLogEntries(logs)
-	return style.Print(items, format, noColor)
-}
-
-func buildLogEntries(logs []api.LogEntry) []style.LogEntry {
-	items := make([]style.LogEntry, len(logs))
-	for i, l := range logs {
-		items[i] = style.LogEntry{
-			ID:        l.ID,
-			Timestamp: l.Timestamp,
-			EventType: l.EventType,
-			Status:    l.Status,
-			Payload:   l.Payload,
-		}
-	}
-
-	return items
+		return commandlogs.List(commandlogs.ListOpts{
+			Format:  render.Format,
+			NoColor: render.NoColor,
+			Limit:   cliutil.ReadIntFlag(cmd, "limit"),
+		})
+	},
 }
 
 func init() {

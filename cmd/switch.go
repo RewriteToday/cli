@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/commands/profiles"
 	"github.com/spf13/cobra"
 )
@@ -14,15 +15,13 @@ var switchCmd = &cobra.Command{
 	Example: `  rewrite switch my-profile
   rewrite switch -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("output")
-		noColor, _ := cmd.Flags().GetBool("no-color")
-		interactive, _ := cmd.Flags().GetBool("interactive")
+		options := cliutil.ReadInteractiveRenderOptions(cmd)
 
 		return profiles.Switch(profiles.SwitchOpts{
 			Args:        args,
-			Format:      format,
-			NoColor:     noColor,
-			Interactive: interactive,
+			Format:      options.Format,
+			NoColor:     options.NoColor,
+			Interactive: options.Interactive,
 		})
 	},
 }

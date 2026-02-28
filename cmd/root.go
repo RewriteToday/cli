@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"strings"
-
-	"github.com/RewriteToday/cli/internal/clierr"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/version"
 	"github.com/spf13/cobra"
 )
@@ -23,9 +21,7 @@ and inspect live webhook traffic without slowing down your local workflow.`,
   rewrite trigger sms.created -i
   rewrite logs list --limit 50
   rewrite completion zsh > ~/.zsh/completions/_rewrite`,
-	PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
-		return validateAndNormalizeOutputFormat(cmd)
-	},
+	PersistentPreRunE: cliutil.ValidateAndNormalizeOutputFormat,
 }
 
 func init() {
@@ -36,73 +32,4 @@ func init() {
 
 func Execute() error {
 	return rootCmd.Execute()
-}
-
-func validateAndNormalizeOutputFormat(cmd *cobra.Command) error {
-	format, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
-	normalized, err := normalizeOutputFormat(format)
-	if err != nil {
-		return err
-	}
-
-	return cmd.Flags().Set("output", normalized)
-}
-
-var formats = []string{"text", "json"}
-
-func normalizeOutputFormat(raw string) (string, error) {
-	format := strings.ToLower(strings.TrimSpace(raw))
-	if isSupportedOutputFormat(format) {
-		return format, nil
-	}
-
-	return "", clierr.Errorf(
-		clierr.CodeUsage,
-		"invalid output format %q (use one of: %s)",
-		raw,
-		strings.Join(formats, ", "),
-	)
-}
-
-func isSupportedOutputFormat(format string) bool {
-	for _, supported := range formats {
-		if format == supported {
-			return true
-		}
-	}
-
-	return false
-}
-
-func ResolveOutputFormat(args []string) string {
-	for i := 0; i < len(args); i++ {
-		arg := args[i]
-
-		if strings.HasPrefix(arg, "--output=") {
-			format, err := normalizeOutputFormat(strings.TrimPrefix(arg, "--output="))
-			if err == nil {
-				return format
-			}
-			return "text"
-		}
-
-		if arg == "--output" || arg == "-o" {
-			if i+1 >= len(args) {
-				return "text"
-			}
-
-			format, err := normalizeOutputFormat(args[i+1])
-			if err == nil {
-				return format
-			}
-
-			return "text"
-		}
-	}
-
-	return "text"
 }

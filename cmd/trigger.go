@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/RewriteToday/cli/internal/api"
-	"github.com/RewriteToday/cli/internal/clierr"
-	"github.com/RewriteToday/cli/internal/style"
+	cliutil "github.com/RewriteToday/cli/internal/cli"
+	"github.com/RewriteToday/cli/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -19,89 +16,16 @@ var triggerCmd = &cobra.Command{
   rewrite trigger sms.created
   rewrite trigger sms.sent -i
   rewrite trigger sms.delivered --output json`,
-	RunE: runTriggerCommand,
-}
+	RunE: func(cmd *cobra.Command, args []string) error {
+		options := cliutil.ReadInteractiveRenderOptions(cmd)
 
-func runTriggerCommand(cmd *cobra.Command, args []string) error {
-	interactive, _ := cmd.Flags().GetBool("interactive")
-	format, _ := cmd.Flags().GetString("output")
-	noColor, _ := cmd.Flags().GetBool("no-color")
-	interactive = shouldUseInteractive(args, interactive)
-
-	eventTypeStr, err := resolveTriggerEventType(args, interactive)
-	if err != nil {
-		return err
-	}
-
-	eventType, err := api.ValidateEventType(eventTypeStr)
-	if err != nil {
-		return err
-	}
-
-	data, err := buildTriggerPayload(eventType, eventTypeStr, interactive)
-	if err != nil {
-		return err
-	}
-
-	client, err := api.New()
-	if err != nil {
-		return err
-	}
-
-	if err := client.TriggerEvent(eventType, data); err != nil {
-		return err
-	}
-
-	return style.Print(fmt.Sprintf("Event '%s' triggered successfully.", eventType), format, noColor)
-}
-
-func resolveTriggerEventType(args []string, interactive bool) (string, error) {
-	var eventTypeStr string
-	if len(args) > 0 {
-		eventTypeStr = args[0]
-	}
-
-	if eventTypeStr == "" && interactive {
-		selected, err := style.SelectString("Select an event type", api.SupportedEventStrings())
-		if err != nil {
-			return "", err
-		}
-		eventTypeStr = selected
-	}
-
-	if eventTypeStr == "" {
-		return "", clierr.Errorf(clierr.CodeUsage, "event type required (or use -i for interactive mode)")
-	}
-
-	return eventTypeStr, nil
-}
-
-func shouldUseInteractive(args []string, interactive bool) bool {
-	if interactive {
-		return true
-	}
-
-	return len(args) == 0
-}
-
-func buildTriggerPayload(eventType api.EventType, eventTypeStr string, interactive bool) (map[string]interface{}, error) {
-	data := api.MockData(eventType)
-	if !interactive {
-		return data, nil
-	}
-
-	override, err := style.TriggerEventForm(eventTypeStr)
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range override {
-		if v != "" {
-			data[k] = v
-		}
-	}
-
-	return data, nil
+		return commands.Trigger(commands.TriggerOpts{
+			Args:        args,
+			Interactive: options.Interactive,
+			Format:      options.Format,
+			NoColor:     options.NoColor,
+		})
+	},
 }
 
 func init() {
