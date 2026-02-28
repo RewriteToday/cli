@@ -16,8 +16,10 @@ import (
 )
 
 var listenCmd = &cobra.Command{
-	Use:   "listen",
-	Short: "Listen for real-time events",
+	Use:     "listen",
+	Short:   "Capture Rewrite events locally in real time",
+	Long:    "Start a lightweight local listener to receive webhook events instantly while you build, test, and debug integrations.",
+	Aliases: []string{"webhook", "webhooks"},
 	Example: `  rewrite listen
   rewrite listen --port 9090
   rewrite listen --output json`,

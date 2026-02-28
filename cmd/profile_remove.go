@@ -8,7 +8,8 @@ import (
 var profileDelCmd = &cobra.Command{
 	Use:     "remove [name]",
 	Aliases: []string{"rm", "del", "delete"},
-	Short:   "Remove a logged-in profile",
+	Short:   "Remove profiles you no longer need",
+	Long:    "Clean up saved Rewrite profiles and keep your local setup focused on the accounts and environments that matter.",
 	Args:    cobra.MaximumNArgs(1),
 	Example: `  rewrite profile remove my-profile
   rewrite profile remove -i`,

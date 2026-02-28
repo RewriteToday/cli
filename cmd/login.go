@@ -10,9 +10,11 @@ import (
 )
 
 var loginCmd = &cobra.Command{
-	Use:   "login [profile-name]",
-	Short: "Authenticate with Rewrite and save a profile",
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "login [profile-name]",
+	Short:   "Authenticate with Rewrite and get productive fast",
+	Long:    "Connect your account, save a reusable profile, and start working with Rewrite in seconds from the command line.",
+	Aliases: []string{"auth"},
+	Args:    cobra.MaximumNArgs(1),
 	Example: `  rewrite login
   rewrite login team-staging
   rewrite login -i`,

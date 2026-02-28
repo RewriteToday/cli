@@ -16,8 +16,10 @@ import (
 )
 
 var logsTailCmd = &cobra.Command{
-	Use:   "tail",
-	Short: "Receive logs via webhook in real-time",
+	Use:     "tail",
+	Short:   "Stream incoming Rewrite logs as they happen",
+	Long:    "Open a live log stream in your terminal to debug webhook traffic the moment it arrives.",
+	Aliases: []string{"stream"},
 	Example: `  rewrite logs tail
   rewrite logs tail --port 9090
   rewrite logs tail --output json`,

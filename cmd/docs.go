@@ -7,8 +7,11 @@ import (
 )
 
 var docsCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Open the Rewrite documentation in your browser",
+	Use:     "docs",
+	Short:   "Open the Rewrite docs instantly",
+	Long:    "Jump straight into the official Rewrite documentation when you need details, examples, or implementation guidance.",
+	Aliases: []string{"doc", "documentation"},
+	Example: `  rewrite docs`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		noColor, _ := cmd.Flags().GetBool("no-color")
 

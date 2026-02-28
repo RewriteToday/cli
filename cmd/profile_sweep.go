@@ -6,8 +6,11 @@ import (
 )
 
 var profileSweepCmd = &cobra.Command{
-	Use:   "sweep",
-	Short: "Sweep all profiles created before",
+	Use:     "sweep",
+	Short:   "Bulk-clean old profiles in seconds",
+	Long:    "Remove older profiles in one pass to keep your Rewrite workspace lean and easy to manage.",
+	Aliases: []string{"clean"},
+	Example: `  rewrite profile sweep`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		noColor, _ := cmd.Flags().GetBool("no-color")
 

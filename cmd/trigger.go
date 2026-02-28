@@ -10,9 +10,11 @@ import (
 )
 
 var triggerCmd = &cobra.Command{
-	Use:   "trigger [event-type]",
-	Short: "Trigger a test event",
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "trigger [event-type]",
+	Short:   "Fire realistic test events on demand",
+	Long:    "Trigger Rewrite test events instantly to validate integrations, inspect downstream behavior, and debug faster.",
+	Aliases: []string{"test"},
+	Args:    cobra.MaximumNArgs(1),
 	Example: `  rewrite trigger
   rewrite trigger sms.created
   rewrite trigger sms.sent -i

@@ -7,9 +7,13 @@ import (
 )
 
 var logsListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List recent logs",
-	RunE:  runLogsListCommand,
+	Use:     "list",
+	Short:   "Show the latest Rewrite logs at a glance",
+	Long:    "Pull recent log entries so you can spot deliveries, failures, and payloads quickly without opening the dashboard.",
+	Aliases: []string{"ls"},
+	Example: `  rewrite logs list
+  rewrite logs list --limit 50`,
+	RunE: runLogsListCommand,
 }
 
 func runLogsListCommand(cmd *cobra.Command, _ []string) error {

@@ -13,9 +13,11 @@ var rootCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Version:       version.Version,
-	Short:         "A developer-first CLI to integrate Rewrite in your workflow",
-	Long: `Rewrite CLI helps you authenticate, manage profiles, trigger test events,
-and inspect webhook logs during local development.`,
+	Short:         "The fastest way to test, monitor, and ship Rewrite integrations",
+	Long: `Rewrite CLI gives you a faster, cleaner way to build with Rewrite from the terminal.
+
+Authenticate in seconds, switch between profiles, trigger realistic test events,
+and inspect live webhook traffic without slowing down your local workflow.`,
 	Example: `  rewrite login my-profile
   rewrite whoami --output json
   rewrite trigger sms.created -i

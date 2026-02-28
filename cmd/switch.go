@@ -6,9 +6,11 @@ import (
 )
 
 var switchCmd = &cobra.Command{
-	Use:   "switch [profile-name]",
-	Short: "Switch the active profile",
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "switch [profile-name]",
+	Short:   "Switch profiles instantly and keep momentum",
+	Long:    "Change the active Rewrite profile in one command so you can move between projects and environments without breaking flow.",
+	Aliases: []string{"use"},
+	Args:    cobra.MaximumNArgs(1),
 	Example: `  rewrite switch my-profile
   rewrite switch -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
