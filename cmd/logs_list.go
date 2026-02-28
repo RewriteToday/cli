@@ -51,6 +51,6 @@ func buildLogEntries(logs []api.LogEntry) []style.LogEntry {
 }
 
 func init() {
-	logsListCmd.Flags().Int("limit", 20, "Number of log entries to show")
+	logsListCmd.Flags().Int("limit", 20, "Set how many recent log entries you want in each snapshot")
 	logsCmd.AddCommand(logsListCmd)
 }

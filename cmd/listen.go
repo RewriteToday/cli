@@ -85,6 +85,6 @@ func listen(format string, noColor bool, port int) error {
 }
 
 func init() {
-	listenCmd.Flags().Int("port", 8080, "Port to bind for local webhook listener")
+	listenCmd.Flags().Int("port", 8080, "Choose the local port where Rewrite events should land")
 	rootCmd.AddCommand(listenCmd)
 }

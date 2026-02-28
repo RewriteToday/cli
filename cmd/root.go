@@ -29,9 +29,9 @@ and inspect live webhook traffic without slowing down your local workflow.`,
 }
 
 func init() {
-	rootCmd.PersistentFlags().Bool("no-color", false, "Remove color from the output")
-	rootCmd.PersistentFlags().BoolP("interactive", "i", false, "Run in interactive mode")
-	rootCmd.PersistentFlags().StringP("output", "o", "text", "Output format (text or json)")
+	rootCmd.PersistentFlags().Bool("no-color", false, "Render clean, color-free output for piping, logs, and minimal terminals")
+	rootCmd.PersistentFlags().BoolP("interactive", "i", false, "Use guided prompts for a faster, more intuitive command flow")
+	rootCmd.PersistentFlags().StringP("output", "o", "text", "Choose your output style: text for quick reads or json for automation")
 }
 
 func Execute() error {

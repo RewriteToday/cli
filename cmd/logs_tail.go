@@ -85,6 +85,6 @@ func buildLogsTailHandler(format string, noColor bool) http.Handler {
 }
 
 func init() {
-	logsTailCmd.Flags().Int("port", 8080, "Port to bind for local webhook log listener")
+	logsTailCmd.Flags().Int("port", 8080, "Choose the local port for your live Rewrite log stream")
 	logsCmd.AddCommand(logsTailCmd)
 }
