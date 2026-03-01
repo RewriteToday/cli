@@ -15,7 +15,7 @@ var triggerCmd = &cobra.Command{
 	Example: `  rewrite trigger
   rewrite trigger sms.created
   rewrite trigger sms.sent -i
-  rewrite trigger sms.delivered --output json`,
+  rewrite trigger sms.failed --output json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return commands.Trigger(commands.TriggerOpts{
 			Args:                     args,

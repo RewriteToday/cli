@@ -1,6 +1,10 @@
 package api
 
-import "github.com/RewriteToday/cli/internal/clierr"
+import (
+	"strings"
+
+	"github.com/RewriteToday/cli/internal/clierr"
+)
 
 type EventType string
 
@@ -8,15 +12,15 @@ const (
 	SMSCreated   EventType = "sms.created"
 	SMSSent      EventType = "sms.sent"
 	SMSDelivered EventType = "sms.delivered"
+	SMSFailed    EventType = "sms.failed"
 )
 
 var SupportedEvents = []EventType{
 	SMSCreated,
 	SMSSent,
 	SMSDelivered,
+	SMSFailed,
 }
-
-const supportedEventList = "sms.created, sms.sent, sms.delivered"
 
 func SupportedEventStrings() []string {
 	result := make([]string, len(SupportedEvents))
@@ -28,11 +32,11 @@ func SupportedEventStrings() []string {
 
 func ValidateEventType(s string) (EventType, error) {
 	switch EventType(s) {
-	case SMSCreated, SMSSent, SMSDelivered:
+	case SMSCreated, SMSSent, SMSDelivered, SMSFailed:
 		return EventType(s), nil
 	}
 
-	return "", clierr.Errorf(clierr.CodeUsage, "unsupported event type '%s', supported: %s", s, supportedEventList)
+	return "", clierr.Errorf(clierr.CodeUsage, "unsupported event type '%s', supported: %s", s, strings.Join(SupportedEventStrings(), ", "))
 }
 
 func MockData(eventType EventType) map[string]any {
@@ -66,6 +70,19 @@ func MockData(eventType EventType) map[string]any {
 			"delivered_at": "2025-01-15T10:30:10Z",
 			"sent_at":      "2025-01-15T10:30:05Z",
 			"created_at":   "2025-01-15T10:30:00Z",
+		}
+	case SMSFailed:
+		return map[string]any{
+			"id":            "msg_01abc123",
+			"to":            "+5511999999999",
+			"from":          "+5511888888888",
+			"body":          "Hello from Rewrite!",
+			"status":        "failed",
+			"error_code":    "carrier_unreachable",
+			"error_message": "Carrier rejected delivery",
+			"failed_at":     "2025-01-15T10:30:12Z",
+			"sent_at":       "2025-01-15T10:30:05Z",
+			"created_at":    "2025-01-15T10:30:00Z",
 		}
 	default:
 		return map[string]any{}

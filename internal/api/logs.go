@@ -46,6 +46,8 @@ func eventStatus(eventType EventType) string {
 		return "sent"
 	case SMSDelivered:
 		return "delivered"
+	case SMSFailed:
+		return "failed"
 	default:
 		return ""
 	}

@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/RewriteToday/cli/internal/api"
 	cliutil "github.com/RewriteToday/cli/internal/cli"
 	"github.com/RewriteToday/cli/internal/network"
 	"github.com/RewriteToday/cli/internal/style"
@@ -21,15 +22,21 @@ type ListenOpts struct {
 }
 
 func Listen(opts ListenOpts) error {
-	const route = "/events/listen"
-
 	addr := fmt.Sprintf("localhost:%d", opts.Port)
-	fmt.Printf("Waiting for webhook events at http://%s%s (press Ctrl+C to stop)\n", addr, route)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	return network.Serve(ctx, addr, route, buildListenHandler(opts.Format, opts.NoColor))
+	if err := api.RegisterLocalListener(opts.Port); err != nil {
+		return err
+	}
+	defer func() {
+		_ = api.UnregisterLocalListener(opts.Port)
+	}()
+
+	fmt.Printf("Waiting for webhook events at http://%s%s (press Ctrl+C to stop)\n", addr, api.LocalListenRoute)
+
+	return network.Serve(ctx, addr, api.LocalListenRoute, buildListenHandler(opts.Format, opts.NoColor))
 }
 
 func buildListenHandler(format string, noColor bool) http.Handler {

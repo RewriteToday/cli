@@ -32,12 +32,7 @@ func Trigger(opts TriggerOpts) error {
 		return err
 	}
 
-	client, err := api.New()
-	if err != nil {
-		return err
-	}
-
-	if err := client.TriggerEvent(eventType, data); err != nil {
+	if err := api.DispatchEvent(eventType, data); err != nil {
 		return err
 	}
 
