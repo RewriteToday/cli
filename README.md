@@ -11,15 +11,19 @@ From login to live logs, stay in flow and ship faster from the command line.
 
 ## Install
 
-</div>
-
 You can easily install the *Rewrite CLI* with `curl`
+
+</div>
 
 ```sh
 curl -fsSL https://rewritetoday.com/install | bash
 ```
 
+<div align="center">
+
 And then just check the current version of the CLI
+
+</div>
 
 ```sh
 rewrite -v
