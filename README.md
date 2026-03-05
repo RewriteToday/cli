@@ -5,7 +5,7 @@
 The fastest way to build and operate SMS flows with Rewrite.
 From login to live logs, stay in flow and ship faster from the command line.
 
-[Website](https://rewritetoday.com) • [Dashboard](https://dash.rewritetoday.com) • [Docs](https://docs.rewritetoday.com) • [CLI Docs](https://docs.rewritetoday.com/en/cli)
+[CLI Docs](https://docs.rewritetoday.com/en/cli) • [Website](https://rewritetoday.com) • [Dashboard](https://dash.rewritetoday.com)
 
 <img src="https://cdn.rewritetoday.com/assets/banners/cli.png" width="100%" alt="Rewrite CLI Banner"/>
 
@@ -13,9 +13,13 @@ From login to live logs, stay in flow and ship faster from the command line.
 
 </div>
 
+You can easily install the *Rewrite CLI* with `curl`
+
 ```sh
 curl -fsSL https://rewritetoday.com/install | bash
 ```
+
+And then just check the current version of the CLI
 
 ```sh
 rewrite -v
@@ -31,6 +35,9 @@ Installing the CLI provides access to the `rewrite` command
 
 ```bash
 rewrite [command] [...flags] [...args]
+
+# Use this to get help
+rewrite <command> -h
 ```
 
 <div align="center">
@@ -64,13 +71,6 @@ sudo apt install gnome-keyring
 <div align="center">
 
 Or any other keyring based on your distro.
-
-Use `rewrite <command> -h` for command help.
-
-For complete command reference and examples:
-[https://docs.rewritetoday.com/en/cli](https://docs.rewritetoday.com/en/cli)
-
----
 
 Made with 🤍 by the Rewrite team. <br/>
 SMS the way it should be.
