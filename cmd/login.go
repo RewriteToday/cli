@@ -14,15 +14,18 @@ var loginCmd = &cobra.Command{
 	Args:    cobra.MaximumNArgs(1),
 	Example: `  rewrite login
   rewrite login team-staging
+  rewrite login team-staging --api-key rw_xxxxxx.yyyyyy
   rewrite login -i`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return commands.Login(commands.LoginOpts{
 			Args:                     args,
+			APIKey:                   cliutil.ReadStringFlag(cmd, "api-key"),
 			InteractiveRenderOptions: cliutil.ReadInteractiveRenderOptions(cmd),
 		})
 	},
 }
 
 func init() {
+	loginCmd.Flags().String("api-key", "", "Import an existing Rewrite project API key")
 	rootCmd.AddCommand(loginCmd)
 }

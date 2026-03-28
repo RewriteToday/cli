@@ -3,6 +3,7 @@ package auth
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/RewriteToday/cli/internal/profile"
 )
@@ -18,18 +19,21 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return t.wrapped.RoundTrip(req)
 }
 
+func NewBearerClient(apiKey string) *http.Client {
+	return &http.Client{
+		Timeout: 30 * time.Second,
+		Transport: &authTransport{
+			apiKey:  apiKey,
+			wrapped: http.DefaultTransport,
+		},
+	}
+}
+
 func NewAuthenticatedClient() (*http.Client, string, error) {
 	name, apiKey, err := profile.GetActive()
 	if err != nil {
 		return nil, "", fmt.Errorf("not authenticated: %w", err)
 	}
 
-	client := &http.Client{
-		Transport: &authTransport{
-			apiKey:  apiKey,
-			wrapped: http.DefaultTransport,
-		},
-	}
-
-	return client, name, nil
+	return NewBearerClient(apiKey), name, nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/RewriteToday/cli/internal/clierr"
@@ -13,6 +14,7 @@ import (
 	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/huh"
+	"golang.org/x/term"
 )
 
 func InputString(title, placeholder string) (string, error) {
@@ -28,6 +30,18 @@ func InputString(title, placeholder string) (string, error) {
 	}
 
 	return value, nil
+}
+
+func InputSecret(title string) (string, error) {
+	fmt.Fprintf(os.Stderr, "%s: ", title)
+
+	value, err := term.ReadPassword(int(os.Stdin.Fd()))
+	fmt.Fprintln(os.Stderr)
+	if err != nil {
+		return "", fmt.Errorf("input cancelled: %w", err)
+	}
+
+	return strings.TrimSpace(string(value)), nil
 }
 
 func SelectString(title string, options []string) (string, error) {

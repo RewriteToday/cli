@@ -54,11 +54,23 @@ Before you enjoy what we have to offer, it is highly recommended to connect your
 
 ```bash
 rewrite login
+rewrite login my-project --api-key rw_xxxxxx.yyyyyy
 ```
 
 <div align="center">
 
-After authentication (*OAuth Device Flow*), your account is automatically connected and you can use everything you want.
+The CLI stores a Rewrite project API key in your active profile so you can call the project-scoped API directly.
+
+You can pass the key with `--api-key`, set `REWRITE_API_KEY`, or use `-i` to paste it securely.
+
+```bash
+rewrite health
+rewrite message send --to +5511999999999 --content "Hello from Rewrite"
+rewrite message list --limit 20
+rewrite webhook list
+rewrite template list
+rewrite otp create --to +5511999999999
+```
 
 ## Storing
 
