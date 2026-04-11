@@ -58,13 +58,15 @@ rewrite login
 
 <div align="center">
 
-After authentication (*OAuth Device Flow*), your account is automatically connected and you can use everything you want.
+After the authentication, your account is automatically connected and you can use everything you want.
+
+Optionally Rewrite CLI uses the `REWRITE_API_KEY` enviroment variable as an API key.
 
 ## Storing
 
 Your account token is securely stored in your operating system's native keyring, so you do not need to worry about it.
 
-If the token cannot be saved, you must install the keyring on your operating system (Linux only)
+If the token can not be saved, you must install the keyring on your operating system (Linux only).
 
 </div>
 
